@@ -105,6 +105,6 @@ public class Widgets {
 	 * Returns true if the control has been created and been disposed or false if its not been created yet or not been disposed
 	 */
 	public static boolean isDisposed(Control control) {
-		return control != null && control.isDisposed();
+		return control == null || control.isDisposed();
 	}
 }
