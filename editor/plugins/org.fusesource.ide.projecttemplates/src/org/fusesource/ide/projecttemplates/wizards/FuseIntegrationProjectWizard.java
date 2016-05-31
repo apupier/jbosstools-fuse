@@ -58,6 +58,16 @@ public class FuseIntegrationProjectWizard extends Wizard implements INewWizard {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
+	 */
+	@Override
+	public boolean canFinish() {
+		return  locationPage.isPageComplete() && 
+				runtimeAndCamelVersionPage.isPageComplete() && 
+				templateSelectionPage.isPageComplete();
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
 	@Override
@@ -76,7 +86,7 @@ public class FuseIntegrationProjectWizard extends Wizard implements INewWizard {
 		TemplateItem template = templateSelectionPage.getSelectedTemplate();
 		if (template != null) {
 			try {
-				template.getConfigurator().configureProject(c.getProject(), metadata);
+				template.getTemplate().create(c.getProject(), metadata);
 			} catch (CoreException ex) {
 				ProjectTemplatesActivator.pluginLog().logError("Unable to create project...", ex);
 				return false;

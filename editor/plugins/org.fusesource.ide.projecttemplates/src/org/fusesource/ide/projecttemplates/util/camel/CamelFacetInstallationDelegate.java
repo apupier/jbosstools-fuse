@@ -69,6 +69,7 @@ public class CamelFacetInstallationDelegate implements IDelegate {
 	public void execute(IProject project, IProjectFacetVersion fv,
 			Object config, IProgressMonitor monitor) throws CoreException {
 		model = (IDataModel) config;
+		if (!model.isPropertySet(ICamelFacetDataModelProperties.CAMEL_PROJECT_METADATA)) return;
 		metadata = (NewProjectMetaData)model.getProperty(ICamelFacetDataModelProperties.CAMEL_PROJECT_METADATA);
 		
 		// store the camel version as project property

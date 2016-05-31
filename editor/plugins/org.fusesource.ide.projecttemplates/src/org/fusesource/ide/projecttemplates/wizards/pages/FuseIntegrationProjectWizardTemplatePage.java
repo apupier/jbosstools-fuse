@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.fusesource.ide.foundation.ui.util.Selections;
 import org.fusesource.ide.foundation.ui.util.Widgets;
-import org.fusesource.ide.projecttemplates.adopters.TemplateProjectConfiguratorSupport;
+import org.fusesource.ide.projecttemplates.adopters.util.CamelDSLType;
 import org.fusesource.ide.projecttemplates.internal.Messages;
 import org.fusesource.ide.projecttemplates.internal.ProjectTemplatesActivator;
 import org.fusesource.ide.projecttemplates.wizards.pages.filter.TemplateNameAndKeywordPatternFilter;
@@ -223,7 +223,7 @@ public class FuseIntegrationProjectWizardTemplatePage extends WizardPage {
 				if (!event.getSelection().isEmpty()) {
 					Object selObj = Selections.getFirstSelection(event.getSelection());
 					if (selObj instanceof TemplateItem) {
-						updateTemplateInfo(((TemplateItem)selObj));
+						updateTemplateInfo((TemplateItem)selObj);
 						return;
 					}
 				} 
@@ -241,10 +241,10 @@ public class FuseIntegrationProjectWizardTemplatePage extends WizardPage {
 			btn_routesDSL.setEnabled(true);
 			templateInfoText.setText("");
 		} else {
-			btn_blueprintDSL.setEnabled(template.getConfigurator().supportsDSL(TemplateProjectConfiguratorSupport.DSL_TYPE.BLUEPRINT));
-			btn_springDSL.setEnabled(template.getConfigurator().supportsDSL(TemplateProjectConfiguratorSupport.DSL_TYPE.SPRING));
-			btn_javaDSL.setEnabled(template.getConfigurator().supportsDSL(TemplateProjectConfiguratorSupport.DSL_TYPE.JAVA));
-			btn_routesDSL.setEnabled(template.getConfigurator().supportsDSL(TemplateProjectConfiguratorSupport.DSL_TYPE.ROUTES));
+			btn_blueprintDSL.setEnabled(template.getTemplate().supportsDSL(CamelDSLType.BLUEPRINT));
+			btn_springDSL.setEnabled(template.getTemplate().supportsDSL(CamelDSLType.SPRING));
+			btn_javaDSL.setEnabled(template.getTemplate().supportsDSL(CamelDSLType.JAVA));
+			btn_routesDSL.setEnabled(template.getTemplate().supportsDSL(CamelDSLType.ROUTES));
 			templateInfoText.setText(template.getDescription());
 		}
 		validate();
@@ -310,11 +310,11 @@ public class FuseIntegrationProjectWizardTemplatePage extends WizardPage {
 		return null;
 	}
 	
-	public TemplateProjectConfiguratorSupport.DSL_TYPE getDSL() {
-		if (btn_blueprintDSL.getSelection()) return TemplateProjectConfiguratorSupport.DSL_TYPE.BLUEPRINT;
-		if (btn_springDSL.getSelection()) return TemplateProjectConfiguratorSupport.DSL_TYPE.SPRING;
-		if (btn_javaDSL.getSelection()) return TemplateProjectConfiguratorSupport.DSL_TYPE.JAVA;
-		if (btn_routesDSL.getSelection()) return TemplateProjectConfiguratorSupport.DSL_TYPE.ROUTES;
+	public CamelDSLType getDSL() {
+		if (btn_blueprintDSL.getSelection()) return CamelDSLType.BLUEPRINT;
+		if (btn_springDSL.getSelection()) return CamelDSLType.SPRING;
+		if (btn_javaDSL.getSelection()) return CamelDSLType.JAVA;
+		if (btn_routesDSL.getSelection()) return CamelDSLType.ROUTES;
 		return null;
 	}
 }

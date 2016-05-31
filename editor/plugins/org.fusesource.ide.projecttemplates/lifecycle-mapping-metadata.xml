@@ -14,7 +14,7 @@
 			</pluginExecutionFilter>
 			<action>
 				<configurator>
-					<id>org.fusesource.ide.project.camel.maven.configurator.wtp</id>
+					<id>org.fusesource.ide.projecttemplates.camel.maven.configurator.wtp</id>
 				</configurator>
 			</action>
 		</pluginExecution>

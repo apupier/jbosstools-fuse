@@ -169,6 +169,8 @@ public class FuseIntegrationProjectWizardLocationPage extends WizardPage {
 		new Label(locationGrp, SWT.None);
 		
 		setControl(container);
+		
+		projectNameText.setFocus();
 	}
 	
 	/**

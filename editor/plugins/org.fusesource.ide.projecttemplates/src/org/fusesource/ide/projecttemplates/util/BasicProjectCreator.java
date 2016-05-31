@@ -57,11 +57,11 @@ public class BasicProjectCreator extends Job {
 			project.create(monitor);
 			project.open(monitor);
 			
-			IFacetedProject fp = ProjectFacetsManager.create(project, true, monitor);
-			// now add java facet
-			fp.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getDefaultVersion(), null, monitor);
-			// and maven facet
-			fp.installProjectFacet(ProjectFacetsManager.getProjectFacet("jboss.m2").getDefaultVersion(), null, monitor);
+//			IFacetedProject fp = ProjectFacetsManager.create(project, true, monitor);
+//			// now add java facet
+//			fp.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getDefaultVersion(), null, monitor);
+//			// and maven facet
+//			fp.installProjectFacet(ProjectFacetsManager.getProjectFacet("jboss.m2").getDefaultVersion(), null, monitor);
 		} catch (Exception ex) {
 			ProjectTemplatesActivator.pluginLog().logError(ex);
 			return Status.CANCEL_STATUS;

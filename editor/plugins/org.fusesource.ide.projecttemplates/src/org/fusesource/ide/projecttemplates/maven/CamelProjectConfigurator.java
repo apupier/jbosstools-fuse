@@ -11,6 +11,8 @@
 package org.fusesource.ide.projecttemplates.maven;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
@@ -41,9 +43,9 @@ import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 import org.eclipse.wst.common.project.facet.core.internal.FacetedProjectNature;
 import org.fusesource.ide.project.RiderProjectNature;
-import org.fusesource.ide.project.camel.CamelFacetDataModelProvider;
-import org.fusesource.ide.project.camel.ICamelFacetDataModelProperties;
 import org.fusesource.ide.project.providers.CamelVirtualFolder;
+import org.fusesource.ide.projecttemplates.util.camel.CamelFacetDataModelProvider;
+import org.fusesource.ide.projecttemplates.util.camel.ICamelFacetDataModelProperties;
 import org.jboss.tools.maven.core.IJBossMavenConstants;
 import org.jboss.tools.maven.core.internal.project.facet.MavenFacetInstallDataModelProvider;
 
@@ -77,6 +79,18 @@ public class CamelProjectConfigurator extends AbstractProjectConfigurator {
 	public void configure(ProjectConfigurationRequest request, IProgressMonitor monitor) throws CoreException {
 		MavenProject mavenProject = request.getMavenProject();
 		IProject project = request.getProject();
+		
+		IFacetedProject fproj = ProjectFacetsManager.create(project);
+		if (fproj != null) {
+			Set<IProjectFacetVersion> facets = fproj.getProjectFacets();
+			Iterator<IProjectFacetVersion> itFacet = facets.iterator();
+			while (itFacet.hasNext()) {
+				IProjectFacetVersion f = itFacet.next();
+				if (f.getProjectFacet().getId().equals(ICamelFacetDataModelProperties.CAMEL_PROJECT_FACET)) {
+					return;
+				}
+			}
+		}			
 		configureNature(project, mavenProject, monitor);
 		configureInternal(mavenProject, project, monitor);
 	}
@@ -132,7 +146,6 @@ public class CamelProjectConfigurator extends AbstractProjectConfigurator {
 	private boolean isCamelConfigurable(MavenProject mavenProject, IProject project) {
 		// Look for a file that has parent "blueprint" and grandparent
 		// "OSGI-INF"
-
 		final Boolean[] found = new Boolean[1];
 		found[0] = false;
 		try {

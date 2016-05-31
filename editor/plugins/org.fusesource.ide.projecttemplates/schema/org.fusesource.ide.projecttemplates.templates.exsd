@@ -130,13 +130,13 @@ Valid values are 0 and bigger integer numbers. Please don&apos;t use the values 
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="configurator" type="string" use="required">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
                   The configurator class which will handle the configuration of a new project for the template.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="org.fusesource.ide.projecttemplates.adopters.AbstractProjectTemplateConfigurator:"/>
+                  <meta.attribute kind="java" basedOn="org.fusesource.ide.projecttemplates.adopters.AbstractProjectTemplate:"/>
                </appinfo>
             </annotation>
          </attribute>

@@ -11,7 +11,7 @@
 package org.fusesource.ide.projecttemplates.util;
 
 import org.eclipse.wst.server.core.IRuntime;
-import org.fusesource.ide.projecttemplates.adopters.TemplateProjectConfiguratorSupport;
+import org.fusesource.ide.projecttemplates.adopters.util.CamelDSLType;
 
 /**
  * @author lhein
@@ -20,7 +20,7 @@ public class NewProjectMetaData {
 	private String projectName;
 	private String camelVersion;
 	private IRuntime targetRuntime;
-	private TemplateProjectConfiguratorSupport.DSL_TYPE dslType;
+	private CamelDSLType dslType;
 	private boolean blankProject;
 	
 	/**
@@ -33,7 +33,7 @@ public class NewProjectMetaData {
 	/**
 	 * @return the dslType
 	 */
-	public TemplateProjectConfiguratorSupport.DSL_TYPE getDslType() {
+	public CamelDSLType getDslType() {
 		return this.dslType;
 	}
 	
@@ -68,7 +68,7 @@ public class NewProjectMetaData {
 	/**
 	 * @param dslType the dslType to set
 	 */
-	public void setDslType(TemplateProjectConfiguratorSupport.DSL_TYPE dslType) {
+	public void setDslType(CamelDSLType dslType) {
 		this.dslType = dslType;
 	}
 	

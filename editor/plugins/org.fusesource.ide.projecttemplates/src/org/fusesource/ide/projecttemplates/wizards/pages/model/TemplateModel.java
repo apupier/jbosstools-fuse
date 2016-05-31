@@ -19,7 +19,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.fusesource.ide.foundation.core.util.Strings;
-import org.fusesource.ide.projecttemplates.adopters.TemplateProjectConfiguratorSupport;
+import org.fusesource.ide.projecttemplates.adopters.AbstractProjectTemplate;
 import org.fusesource.ide.projecttemplates.internal.ProjectTemplatesActivator;
 
 /**
@@ -42,7 +42,7 @@ public class TemplateModel {
 	private static final String PROJECT_TEMPLATE_PROVIDER_ATTR_KEYWORDS = "keywords";
 	private static final String PROJECT_TEMPLATE_PROVIDER_ATTR_DESCRIPTION = "description";
 	private static final String PROJECT_TEMPLATE_PROVIDER_ATTR_CATEGORY = "category";
-	private static final String PROJECT_TEMPLATE_PROVIDER_ATTR_CONFIGURATOR = "configurator";
+	private static final String PROJECT_TEMPLATE_PROVIDER_ATTR_CONFIGURATOR = "class";
 	private static final String PROJECT_TEMPLATE_PROVIDER_ATTR_WEIGHT = "weight";
 
 	private List<CategoryItem> templateCategories = new ArrayList<CategoryItem>();
@@ -76,8 +76,8 @@ public class TemplateModel {
 	private void determineProviderExtension(IConfigurationElement e) {
 		try {
 			final Object o = e.createExecutableExtension(PROJECT_TEMPLATE_PROVIDER_ATTR_CONFIGURATOR);
-			if (o instanceof TemplateProjectConfiguratorSupport) {
-				TemplateProjectConfiguratorSupport configurator = (TemplateProjectConfiguratorSupport)o;
+			if (o instanceof AbstractProjectTemplate) {
+				AbstractProjectTemplate template = (AbstractProjectTemplate)o;
 				String id = e.getAttribute(PROJECT_TEMPLATE_PROVIDER_ATTR_ID);
 				String name = e.getAttribute(PROJECT_TEMPLATE_PROVIDER_ATTR_NAME);
 				String description = e.getAttribute(PROJECT_TEMPLATE_PROVIDER_ATTR_DESCRIPTION);
@@ -94,7 +94,7 @@ public class TemplateModel {
 				if (category == null) {
 					category = getCategory(DEFAULT_CAT_ID);
 				}
-				TemplateItem item = new TemplateItem(id, name, description, iWeight, category, configurator, keywords);
+				TemplateItem item = new TemplateItem(id, name, description, iWeight, category, template, keywords);
 				category.addTemplate(item);
 			}
 		} catch (Exception ex) {

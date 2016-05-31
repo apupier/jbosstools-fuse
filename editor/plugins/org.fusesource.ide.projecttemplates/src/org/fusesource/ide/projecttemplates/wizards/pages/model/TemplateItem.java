@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.fusesource.ide.foundation.core.util.Strings;
-import org.fusesource.ide.projecttemplates.adopters.TemplateProjectConfiguratorSupport;
+import org.fusesource.ide.projecttemplates.adopters.AbstractProjectTemplate;
 
 /**
  * @author lhein
@@ -26,7 +26,7 @@ public class TemplateItem {
 	private List<String> keywords = new ArrayList<>();
 	private int weight;
 	private CategoryItem category;
-	private TemplateProjectConfiguratorSupport configurator;
+	private AbstractProjectTemplate template;
 	
 	/**
 	 * creates a new template item
@@ -36,15 +36,15 @@ public class TemplateItem {
 	 * @param description	the description of the template
 	 * @param weight		the weight for sorting
 	 * @param category		the category
-	 * @param configurator	the configurator class
+	 * @param template		the template class
 	 */
-	public TemplateItem(String id, String name, String description, int weight, CategoryItem category, TemplateProjectConfiguratorSupport configurator, String keywords) {
+	public TemplateItem(String id, String name, String description, int weight, CategoryItem category, AbstractProjectTemplate template, String keywords) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.weight = weight;
 		this.category = category;
-		this.configurator = configurator;
+		this.template = template;
 		initKeywords(keywords);
 	}
 	
@@ -101,9 +101,9 @@ public class TemplateItem {
 	}
 	
 	/**
-	 * @return the configurator
+	 * @return the template
 	 */
-	public TemplateProjectConfiguratorSupport getConfigurator() {
-		return this.configurator;
+	public AbstractProjectTemplate getTemplate() {
+		return this.template;
 	}
 }

@@ -8,79 +8,56 @@
  * Contributors: 
  * Red Hat, Inc. - initial API and implementation 
  ******************************************************************************/ 
-package org.fusesource.ide.projecttemplates.adopters;
+package org.fusesource.ide.projecttemplates.adopters.configurators;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.wst.common.frameworks.datamodel.IDataModel;
 import org.eclipse.wst.common.project.facet.core.IFacetedProject;
+import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
-import org.fusesource.ide.projecttemplates.util.camel.ICamelFacetDataModelProperties;
+import org.fusesource.ide.projecttemplates.internal.ProjectTemplatesActivator;
 import org.fusesource.ide.projecttemplates.util.NewProjectMetaData;
 import org.fusesource.ide.projecttemplates.util.camel.CamelFacetDataModelProvider;
+import org.fusesource.ide.projecttemplates.util.camel.ICamelFacetDataModelProperties;
 
 /**
+ * this configurator does nothing. it just provides additional helper 
+ * methods to retrieve a facet data model and to install a facet on the project
+ * 
  * @author lhein
  */
-public abstract class AbstractProjectTemplateConfigurator implements TemplateProjectConfiguratorSupport {
+public class DefaultTemplateConfigurator implements TemplateConfiguratorSupport {
 
-	/* (non-Javadoc)
-	 * @see org.fusesource.ide.projecttemplates.adopters.TemplateProjectConfiguratorSupport#supportsDSL(org.fusesource.ide.projecttemplates.adopters.TemplateProjectConfiguratorSupport.DSL_TYPE)
+	/*
+	 * (non-Javadoc)
+	 * @see org.fusesource.ide.projecttemplates.adopters.configurators.TemplateConfiguratorSupport#configure(org.eclipse.core.resources.IProject, org.fusesource.ide.projecttemplates.util.NewProjectMetaData, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public boolean supportsDSL(DSL_TYPE type) {
-		// by default we support all DSL types
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.fusesource.ide.projecttemplates.adopters.TemplateProjectConfiguratorSupport#preConfigure(org.eclipse.core.resources.IProject, org.fusesource.ide.projecttemplates.util.NewProjectMetaData)
-	 */
-	@Override
-	public boolean preConfigure(IProject project, NewProjectMetaData projectMetaData) {
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.fusesource.ide.projecttemplates.adopters.TemplateProjectConfiguratorSupport#postConfigure(org.eclipse.core.resources.IProject, org.fusesource.ide.projecttemplates.util.NewProjectMetaData)
-	 */
-	@Override
-	public boolean postConfigure(IProject project, NewProjectMetaData projectMetaData) {
-		return true;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.fusesource.ide.projecttemplates.adopters.TemplateProjectConfiguratorSupport#configureProject(org.eclipse.core.resources.IProject, org.fusesource.ide.projecttemplates.util.NewProjectMetaData)
-	 */
-	@Override
-	public final boolean configureProject(IProject project, NewProjectMetaData projectMetaData) throws CoreException {
-		// call pre actions
-		if (!preConfigure(project, projectMetaData)) {
+	public boolean configure(IProject project, NewProjectMetaData metadata, IProgressMonitor monitor) {
+		IProjectFacetVersion javaFacet = ProjectFacetsManager.getProjectFacet("jst.java").getDefaultVersion();
+		try {
+			// add java facet
+			installFacet(project, "jst.java", javaFacet.getVersionString(), null, monitor);
+			// add m2 facet
+			installFacet(project, "jboss.m2", null, null, monitor);
+			// now add jst utility
+			installFacet(project, "jst.utility", null, null, monitor);
+		} catch (CoreException ex) {
+			ProjectTemplatesActivator.pluginLog().logError(ex);
 			return false;
 		}
-		
-		// call configure actions
-		if (!doConfiguration(project, projectMetaData)) {
-			return false;
-		}
-		
-		// call post actions
-		if (!postConfigure(project, projectMetaData)) {
-			return false;
-		}
-		
-		// if all went fine we are done
 		return true;
 	}
-	
+
 	/**
 	 * creates the datamodel used for the facet installation delegate
 	 * 
 	 * @param projectMetaData	the projects metadata
 	 * @return	a facet configuration
 	 */
-	protected IDataModel getDataModel(NewProjectMetaData projectMetaData) {
+	protected IDataModel getCamelFacetDataModel(NewProjectMetaData projectMetaData) {
 		CamelFacetDataModelProvider dmProv = new CamelFacetDataModelProvider();
 		dmProv.create();
 		IDataModel dm = dmProv.getDataModel();
@@ -110,15 +87,4 @@ public abstract class AbstractProjectTemplateConfigurator implements TemplatePro
 			fp.installProjectFacet(ProjectFacetsManager.getProjectFacet(facetName).getDefaultVersion(), config, monitor);
 		}
 	}
-	
-	/**
-	 * call back function which is invoked after preConfigure and before 
-	 * postConfigure. put in all your configuration logic here.
-	 * 
-	 * @param project
-	 * @param projectMetaData
-	 * @return	true on success
-	 * @throws CoreException
-	 */
-	protected abstract boolean doConfiguration(IProject project, NewProjectMetaData projectMetaData) throws CoreException;
 }

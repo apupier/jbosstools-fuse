@@ -62,7 +62,8 @@
     </projectTemplateCategory>
     <projectTemplate
           category="fuse.projecttemplates.jbossfuse.simple"
-          configurator="org.fusesource.ide.projecttemplates.impl.simple.CBRTemplateConfigurator"
+          class="org.fusesource.ide.projecttemplates.impl.simple.CBRTemplate"
+          configurator="org.fusesource.ide.projecttemplates.impl.simple.CBRTemplate"
           description="%template.simple.cbr.description"
           id="org.fusesource.ide.projecttemplates.cbrTemplateSimple"
           keywords="fuse cbr content based router"
