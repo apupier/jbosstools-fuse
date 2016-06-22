@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jem.util.emf.workbench.ProjectUtilities;
 import org.eclipse.jst.common.project.facet.JavaFacetInstallDataModelProvider;
@@ -38,6 +39,7 @@ import org.eclipse.wst.common.componentcore.ModuleCoreNature;
 import org.eclipse.wst.common.frameworks.datamodel.DataModelFactory;
 import org.eclipse.wst.common.frameworks.datamodel.IDataModel;
 import org.eclipse.wst.common.project.facet.core.IFacetedProject;
+import org.eclipse.wst.common.project.facet.core.IFacetedProjectWorkingCopy;
 import org.eclipse.wst.common.project.facet.core.IProjectFacet;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
@@ -75,6 +77,10 @@ public class CamelProjectConfigurator extends AbstractProjectConfigurator {
 		m2Version = m2Facet.getVersion("1.0"); //$NON-NLS-1$
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.m2e.core.project.configurator.AbstractProjectConfigurator#configure(org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest, org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	@Override
 	public void configure(ProjectConfigurationRequest request, IProgressMonitor monitor) throws CoreException {
 		MavenProject mavenProject = request.getMavenProject();
@@ -95,6 +101,38 @@ public class CamelProjectConfigurator extends AbstractProjectConfigurator {
 		configureInternal(mavenProject, project, monitor);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.m2e.core.project.configurator.AbstractProjectConfigurator#mavenProjectChanged(org.eclipse.m2e.core.project.MavenProjectChangedEvent, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	@Override
+	public void mavenProjectChanged(MavenProjectChangedEvent event, IProgressMonitor monitor) throws CoreException {
+		IMavenProjectFacade facade = event.getMavenProject();
+		if (event.getFlags() == MavenProjectChangedEvent.FLAG_DEPENDENCIES && facade != null) {
+			IProject project = facade.getProject();
+			if (isWTPProject(project)) {
+				MavenProject mavenProject = facade.getMavenProject(monitor);
+				configureInternal(mavenProject, project, monitor);
+			}
+		}
+		super.mavenProjectChanged(event, monitor);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	private void configureNature(IProject project, MavenProject m2Project, IProgressMonitor monitor) throws CoreException {
 		boolean hasCamelDeps = checkCamelDependencies(m2Project);
 		boolean hasCamelContextXML = false;
@@ -119,7 +157,7 @@ public class CamelProjectConfigurator extends AbstractProjectConfigurator {
 			return;
 		}
 		IFacetedProject fproj = ProjectFacetsManager.create(project);
-
+		
 		if (fproj == null) {
 			// Add the modulecore nature
 			WtpUtils.addNatures(project);
@@ -159,66 +197,55 @@ public class CamelProjectConfigurator extends AbstractProjectConfigurator {
 		return found[0];
 	}
 
-	@Override
-	public void mavenProjectChanged(MavenProjectChangedEvent event, IProgressMonitor monitor) throws CoreException {
-		IMavenProjectFacade facade = event.getMavenProject();
-		if (event.getFlags() == MavenProjectChangedEvent.FLAG_DEPENDENCIES && facade != null) {
-			IProject project = facade.getProject();
-			if (isWTPProject(project)) {
-				MavenProject mavenProject = facade.getMavenProject(monitor);
-				configureInternal(mavenProject, project, monitor);
-			}
-		}
-		super.mavenProjectChanged(event, monitor);
-	}
+	
 
 	private boolean isWTPProject(IProject project) {
 		return ModuleCoreNature.getModuleCoreNature(project) != null;
 	}
 
-	private void installM2Facet(IFacetedProject fproj, IProgressMonitor monitor) throws CoreException {
+	private void installM2Facet(IFacetedProject fproj, IFacetedProjectWorkingCopy fpwc, IProgressMonitor monitor) throws CoreException {
 		IDataModel config = (IDataModel) new MavenFacetInstallDataModelProvider().create();
 		config.setBooleanProperty(IJBossMavenConstants.MAVEN_PROJECT_EXISTS, true);
-		installFacet(fproj, m2Facet, m2Version, config, monitor);
+		installFacet(fproj, fpwc, m2Facet, m2Version, config, monitor);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void installDefaultFacets(IFacetedProject fproj, String camelVersion, IProgressMonitor monitor)
 			throws CoreException {
 		IProjectFacet java = ProjectFacetsManager.getProjectFacet("java");
 		IDataModel javaModel = DataModelFactory.createDataModel(new JavaFacetInstallDataModelProvider());
-		installFacet(fproj, java, java.getVersion("1.8"), javaModel, monitor);
-		installUtilityFacet(fproj, monitor);
-		installM2Facet(fproj, monitor);
-		installCamelFacet(fproj, camelVersion, monitor);
+		IFacetedProjectWorkingCopy fpwc = fproj.createWorkingCopy();
+		installFacet(fproj, fpwc, java, java.getVersion("1.8"), javaModel, monitor);
+		installUtilityFacet(fproj, fpwc, monitor);
+		installM2Facet(fproj, fpwc, monitor);
+		installCamelFacet(fproj, fpwc, camelVersion, monitor);
+		if (fpwc.validate(monitor) == Status.OK_STATUS) {
+			fpwc.commitChanges(monitor);
+		}
 	}
 
-	private void installCamelFacet(IFacetedProject fproj, String camelVersionString, IProgressMonitor monitor)
+	private void installCamelFacet(IFacetedProject fproj, IFacetedProjectWorkingCopy fpwc, String camelVersionString, IProgressMonitor monitor)
 			throws CoreException {
 		IDataModel config = (IDataModel) new CamelFacetDataModelProvider().create();
 		config.setBooleanProperty(ICamelFacetDataModelProperties.UPDATE_PROJECT_STRUCTURE, false);
-		installFacet(fproj, camelFacet, getCamelFacetVersion(camelVersionString), config, monitor);
+		installFacet(fproj, fpwc, camelFacet, getCamelFacetVersion(camelVersionString), config, monitor);
 	}
 
-	private void installUtilityFacet(IFacetedProject fproj, IProgressMonitor mon) throws CoreException {
-		installFacet(fproj, utilityFacet, utilityFacetVersion,
+	private void installUtilityFacet(IFacetedProject fproj, IFacetedProjectWorkingCopy fpwc, IProgressMonitor mon) throws CoreException {
+		installFacet(fproj, fpwc, utilityFacet, utilityFacetVersion,
 				(IDataModel) new UtilityFacetInstallDataModelProvider().create(), mon);
 	}
 
-	private void installFacet(IFacetedProject fproj, IProjectFacet facet, IProjectFacetVersion facetVersion,
+	private void installFacet(IFacetedProject fproj, IFacetedProjectWorkingCopy fpwc, IProjectFacet facet, IProjectFacetVersion facetVersion,
 			IDataModel config, IProgressMonitor mon) throws CoreException {
 		try {
-			if (!fproj.hasProjectFacet(facet)) {
-				if (facetVersion != null) { // $NON-NLS-1$
-					fproj.installProjectFacet(facetVersion, config, mon);
+			if (facet != null && !fproj.hasProjectFacet(facet)) {
+				fproj.installProjectFacet(facetVersion, config, mon);
+			} else {
+				IProjectFacetVersion f = fproj.getProjectFacetVersion(facet);
+				if (!f.getVersionString().equals(facetVersion.getVersionString())) {
+					// version change
+					fpwc.changeProjectFacetVersion(facetVersion);
 				}
-//			} else {
-//				IProjectFacetVersion f = fproj.getProjectFacetVersion(facet);
-//				if (!f.getVersionString().equals(facetVersion.getVersionString())) {
-//					// version change
-//					fproj.installProjectFacet(facetVersion, config, mon);
-//					fproj.uninstallProjectFacet(f, config, mon);
-//				}
 			}
 		} catch (CoreException ce) {
 			ce.printStackTrace();
