@@ -22,22 +22,22 @@
     <cxf:cxfEndpoint address="http://localhost:12345/cxf/order" id="orderEndpoint" serviceClass="ws.camel.mycompany.com.OrderEndpoint"/>
     <camelContext id="_camelContext1"
         xmlns="http://camel.apache.org/schema/spring" xmlns:order="http://com.mycompany.camel.ws">
-        <route id="_route1">
+        <route id="ListenerRoute">
             <!-- route starts from the cxf webservice -->
             <!-- and then create the OK reply for the webservice which is still waiting for a reply -->
-            <from id="_from1" uri="cxf:bean:orderEndpoint"/>
+            <from id="listenCXFOrderEnpoint" uri="cxf:bean:orderEndpoint"/>
             <setBody id="_setBody1">
                 <simple>${in.body[0]}</simple>
             </setBody>
             <log id="_log1" message="Got this WSDL payload: ${body}"/>
             <choice id="_choice1">
                 <when id="_when1">
-                    <xpath>/order:order/order:customer/country = 'UK'</xpath>
+                    <xpath id="ukXPath">/order:order/order:customer/country = 'UK'</xpath>
                     <log id="_log2" message="Sending order to the UK"/>
                     <to id="_to1" uri="seda:ukOrders"/>
                 </when>
                 <when id="_when2">
-                    <xpath>/order:order/order:customer/country = 'US'</xpath>
+                    <xpath id="usXpath">/order:order/order:customer/country = 'US'</xpath>
                     <log id="_log3" message="Sending order to the US"/>
                     <to id="_to2" uri="seda:usOrders"/>
                 </when>
@@ -51,17 +51,17 @@
             </transform>
         </route>
         <!-- test route -->
-        <route id="_route2">
+        <route id="UKOrderRoute">
             <from id="_from2" uri="seda:ukOrders"/>
             <to id="_to5" uri="mock:end"/>
         </route>
         <!-- test route -->
-        <route id="_route3">
+        <route id="USOrderRoute">
             <from id="_from3" uri="seda:usOrders"/>
             <to id="_to6" uri="mock:end"/>
         </route>
         <!-- test route -->
-        <route id="_route4">
+        <route id="OtherCountryOrderRoute">
             <from id="_from4" uri="seda:otherOrders"/>
             <to id="_to4" uri="mock:end"/>
         </route>

@@ -140,7 +140,16 @@
           id="org.fusesource.ide.projecttemplates.cxfCodeFirstMedium"
           keywords="cxf"
           name="%template.medium.cxf.code.first.name"
-          weight="50">
+          weight="10">
+    </projectTemplate>
+    <projectTemplate
+          category="fuse.projecttemplates.jbossfuse.advanced"
+          class="org.fusesource.ide.projecttemplates.impl.medium.CXfContractFirstProjectTemplate"
+          description="%template.medium.cxf.contract.first.description"
+          id="org.fusesource.ide.projecttemplates.cxfContractFirstMedium"
+          keywords="cxf"
+          name="%template.medium.cxf.contract.first.name"
+          weight="11">
     </projectTemplate>
  </extension>
  
