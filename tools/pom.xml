@@ -33,6 +33,7 @@
     <slf4j-version>1.7.5</slf4j-version>
     <scala-version>2.11.2</scala-version>
     <scalate-version>1.5.3</scalate-version>
+    <camel.version>2.18.0-SNAPSHOT</camel.version>
   </properties>
 
   <build>

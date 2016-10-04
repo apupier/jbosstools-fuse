@@ -26,6 +26,7 @@ public class StagingRepositoriesPreferenceInitializer extends AbstractPreference
 	static final String STAGING_REPOSITORIES = "stagingRepositories";
 	private static final String PRODUCT_STAGING_REPO_URI = "fuse-internal"+NAME_URL_SEPARATOR+"http://download.eng.brq.redhat.com/brewroot/repos/jb-fuse-6.2-build/latest/maven";
 	private static final String THIRD_PARTY_STAGING_REPO_URI = "redhat-ea"+NAME_URL_SEPARATOR+"https://maven.repository.redhat.com/earlyaccess/all";
+	private static final String APACHE_SNAPSHOTS_REPO_URI = "apache-snapshots"+NAME_URL_SEPARATOR+"https://repository.apache.org/content/groups/snapshots";
 
 	public StagingRepositoriesPreferenceInitializer() {
 		// Keep for reflection initialization
@@ -35,7 +36,10 @@ public class StagingRepositoriesPreferenceInitializer extends AbstractPreference
 	public void initializeDefaultPreferences() {
 		IPreferenceStore preferenceStore = getPreferenceStore();
 		preferenceStore.setDefault(ENABLE_STAGING_REPOSITORIES, false);
-		preferenceStore.setDefault(STAGING_REPOSITORIES, PRODUCT_STAGING_REPO_URI + REPO_SEPARATOR + THIRD_PARTY_STAGING_REPO_URI);
+		preferenceStore.setDefault(
+				STAGING_REPOSITORIES, PRODUCT_STAGING_REPO_URI
+				+ REPO_SEPARATOR + THIRD_PARTY_STAGING_REPO_URI
+				+ REPO_SEPARATOR + APACHE_SNAPSHOTS_REPO_URI);
 	}
 
 	IPreferenceStore getPreferenceStore() {

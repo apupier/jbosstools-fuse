@@ -367,6 +367,9 @@ public class CatalogGenerator {
 
         for (String eipName : eipNames) {
         	String json = cat.modelJSonSchema(eipName);
+        	if("endpoint".equals(eipName)){
+        		System.err.println(json);
+        	}
         	
         	EIPModel model = mapper.readValue(json, EIPModel.class);
         	

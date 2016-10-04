@@ -11,6 +11,7 @@
 package org.fusesource.ide.camel.model.service.core.catalog.eips;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -196,8 +197,17 @@ public class Eip implements ICamelCatalogElement, IParameterContainer {
 	 * @return
 	 */
 	public boolean canHaveChildren() {
+		if("camelContext".equals(getName())){
+			//We need to do a special case because getInput returns null
+			// getInptu migth no tbe teh correct way to know if there are children but this will be surely investigated deeper when doing rest and/or hystrix support
+			return true;
+		}
 		for (Parameter p : getParameters()) {
-			if (p.getType().equalsIgnoreCase("array") && p.getKind().equalsIgnoreCase("element") && getInput().equalsIgnoreCase("true")) return true;
+			if ("array".equalsIgnoreCase(p.getType())
+					&& "element".equalsIgnoreCase(p.getKind())
+					&& "true".equals(getInput())){
+				return true;
+			}
 		}
 		return false;
 	}
@@ -208,10 +218,10 @@ public class Eip implements ICamelCatalogElement, IParameterContainer {
 	 * @return	a list of allowed node type ids or an empty list if not a container
 	 */
 	public List<String> getAllowedChildrenNodeTypes() {
-		ArrayList<String> allowedNodeTypes = new ArrayList<String>();
+		List<String> allowedNodeTypes = new ArrayList<>();
 		if (canHaveChildren()) {
 			for (Parameter p : getParameters()) {
-				if (p.getType().equalsIgnoreCase("array") && p.getKind().equalsIgnoreCase("element") && p.getOneOf() != null) {
+				if ("array".equalsIgnoreCase(p.getType()) && "element".equalsIgnoreCase(p.getKind()) && p.getOneOf() != null) {
 					String oneOfList = p.getOneOf();
 					String[] types = oneOfList.split(",");
 					for (String type : types) {
@@ -229,8 +239,8 @@ public class Eip implements ICamelCatalogElement, IParameterContainer {
      * @return
      */
     public boolean canBeAddedToCamelContextDirectly() {
-    	return 	getName().equalsIgnoreCase(AbstractCamelModelElement.ROUTE_NODE_NAME) || 
-				getName().equalsIgnoreCase("rest") || 
-				getName().equalsIgnoreCase("restConfiguration"); 
+    	return 	AbstractCamelModelElement.ROUTE_NODE_NAME.equalsIgnoreCase(getName()) || 
+				"rest".equalsIgnoreCase(getName()) || 
+				"restConfiguration".equalsIgnoreCase(getName()); 
     }
 }

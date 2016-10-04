@@ -61,7 +61,11 @@ public class EipChecksIT {
 	public void testWireTapCanBeChildOfAllContainers() throws IOException, CoreException {
 		ArrayList<Eip> eips = CamelModelFactory.getModelForVersion(versionToTest).getEipModel().getSupportedEIPs();
 		for (Eip eip : eips) {
-			if (eip.canHaveChildren() == false || eip.getName().equalsIgnoreCase(AbstractCamelModelElement.CHOICE_NODE_NAME)) continue;
+			if (eip.canHaveChildren() == false
+					|| AbstractCamelModelElement.CHOICE_NODE_NAME.equalsIgnoreCase(eip.getName())
+					|| AbstractCamelModelElement.CAMEL_CONTEXT_NODE_NAME.equalsIgnoreCase(eip.getName())){
+				continue;
+			}
 			assertThisEIPCanContainThat(versionToTest, eip.getName(), AbstractCamelModelElement.WIRETAP_NODE_NAME);
 		}
 	}

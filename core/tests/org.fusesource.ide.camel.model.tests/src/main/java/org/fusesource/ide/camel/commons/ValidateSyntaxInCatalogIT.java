@@ -67,7 +67,8 @@ public class ValidateSyntaxInCatalogIT {
 		assertThat(supportedCamelVersions).contains("2.15.1.redhat-621084", 
 													"2.15.1.redhat-621117",
 													"2.17.0.redhat-630187",
-													"2.17.3");
+													"2.17.3",
+													"2.18.0-SNAPSHOT");
 		for (String camelVersion : supportedCamelVersions) {
 			CamelModel camelModel = CamelModelFactory.getModelForVersion(camelVersion);
 			for (Component component : camelModel.getComponentModel().getSupportedComponents()) {
@@ -78,7 +79,9 @@ public class ValidateSyntaxInCatalogIT {
 					try {
 						PropertiesUtils.getPropertyFromUri(selectedEP, param, component);
 					} catch (Exception e) {
+						e.printStackTrace();
 						sb.append(camelVersion + " " + component.getName() + " " + param.getName() + " " + component.getSyntax() + "\n");
+						//PropertiesUtils.getPropertyFromUri(selectedEP, param, component);
 					}
 				}
 			}
