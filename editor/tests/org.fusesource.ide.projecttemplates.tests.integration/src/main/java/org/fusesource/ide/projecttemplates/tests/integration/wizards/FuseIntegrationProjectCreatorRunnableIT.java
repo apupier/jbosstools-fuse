@@ -58,8 +58,8 @@ import org.eclipse.wst.common.project.facet.core.IProjectFacet;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 import org.fusesource.ide.branding.perspective.FusePerspective;
+import org.fusesource.ide.camel.model.service.core.jmx.camel.ICamelDebuggerMBeanFacade;
 import org.fusesource.ide.foundation.ui.util.ScreenshotUtil;
-import org.fusesource.ide.launcher.debug.model.CamelDebugFacade;
 import org.fusesource.ide.launcher.debug.model.CamelDebugTarget;
 import org.fusesource.ide.launcher.debug.util.ICamelDebugConstants;
 import org.fusesource.ide.launcher.ui.launch.ExecutePomAction;
@@ -367,7 +367,7 @@ public class FuseIntegrationProjectCreatorRunnableIT {
 			try{
 				JMXConnector jmxc = JMXConnectorFactory.connect(new JMXServiceURL(ICamelDebugConstants.DEFAULT_JMX_URI));
 				MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
-				deploymentFinished = !mbsc.queryMBeans(new ObjectName(CamelDebugFacade.CAMEL_DEBUGGER_MBEAN_DEFAULT), null).isEmpty();
+				deploymentFinished = !mbsc.queryMBeans(new ObjectName(ICamelDebuggerMBeanFacade.CAMEL_DEBUGGER_MBEAN_DEFAULT), null).isEmpty();
 				isDeploymentOk = deploymentFinished;
 				System.out.println("JMX connection succeeded");
 				System.out.println("isDeployment Finished? " + isDeploymentOk);

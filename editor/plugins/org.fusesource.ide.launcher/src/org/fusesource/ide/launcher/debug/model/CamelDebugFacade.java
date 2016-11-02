@@ -29,11 +29,6 @@ public class CamelDebugFacade implements ICamelDebuggerMBeanFacade {
 
 	private static final boolean DEVELOPER_MODE = false;
 	
-	private static final String CAMEL_PROCESSOR_MBEAN = "org.apache.camel:type=processors,name=\"%s\",*";
-	public static final String CAMEL_DEBUGGER_MBEAN_DEFAULT = "org.apache.camel:type=tracer,name=BacklogDebugger,*";
-	private static final String CAMEL_CONTEXT_MBEAN = "org.apache.camel:type=context,name=\"%s\",*";
-	
-	
 	private static final long TIMEOUT_MBEAN_REGISTRATION = 30 * 1000; // 30 secs
 	
 	private ObjectName objectNameDebugger = null;

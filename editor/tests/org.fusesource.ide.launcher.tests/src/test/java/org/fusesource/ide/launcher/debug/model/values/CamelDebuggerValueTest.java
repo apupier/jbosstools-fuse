@@ -11,7 +11,7 @@
 package org.fusesource.ide.launcher.debug.model.values;
 
 import org.eclipse.debug.core.DebugException;
-import org.fusesource.ide.launcher.debug.model.CamelDebugFacade;
+import org.fusesource.ide.camel.model.service.core.jmx.camel.ICamelDebuggerMBeanFacade;
 import org.fusesource.ide.launcher.debug.model.CamelStackFrame;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +28,7 @@ public class CamelDebuggerValueTest {
 	@Mock
 	private CamelStackFrame stackFrame;
 	@Mock
-	private CamelDebugFacade debugger;
+	private ICamelDebuggerMBeanFacade debugger;
 
 	@Test
 	public void testCreation() throws DebugException {

@@ -10,7 +10,7 @@
  ******************************************************************************/
 package org.fusesource.ide.launcher.debug.model.values;
 
-import org.fusesource.ide.launcher.debug.model.CamelDebugFacade;
+import org.fusesource.ide.camel.model.service.core.jmx.camel.ICamelDebuggerMBeanFacade;
 import org.fusesource.ide.launcher.debug.model.CamelStackFrame;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +27,7 @@ public class CamelProcessorValueTest {
 	@Mock
 	private CamelStackFrame stackFrame;
 	@Mock
-	private CamelDebugFacade debugger;
+	private ICamelDebuggerMBeanFacade debugger;
 
 	@Test
 	public void testCreationOfInitialVariables() throws Exception {

@@ -33,3 +33,5 @@ Export-Package: org.fusesource.ide.launcher,
  org.fusesource.ide.launcher.run.util,
  org.fusesource.ide.launcher.util
 Import-Package: org.eclipse.jdt.ui
+Bundle-ClassPath: lib/jolokia-client-java-1.3.5.jar,
+ .

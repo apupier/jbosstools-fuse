@@ -20,6 +20,10 @@ import java.util.Set;
  */
 public interface ICamelDebuggerMBeanFacade {
 	
+	String CAMEL_PROCESSOR_MBEAN = "org.apache.camel:type=processors,name=\"%s\",*";
+	String CAMEL_DEBUGGER_MBEAN_DEFAULT = "org.apache.camel:type=tracer,name=BacklogDebugger,*";
+	String CAMEL_CONTEXT_MBEAN = "org.apache.camel:type=context,name=\"%s\",*";
+
 	/**
 	 * returns the camel context id
 	 * 
