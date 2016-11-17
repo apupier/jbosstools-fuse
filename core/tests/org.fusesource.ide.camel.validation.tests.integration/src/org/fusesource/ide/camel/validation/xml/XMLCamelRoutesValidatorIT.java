@@ -99,6 +99,7 @@ public class XMLCamelRoutesValidatorIT {
 		CamelFile camelFile = new CamelFile(resource);
 		final CamelContextElement camelContext = new CamelContextElement(camelFile, null);
 		when(camelContextXmlNode.getChildNodes().getLength()).thenReturn(0);
+		when(camelContextXmlNode.getNodeName()).thenReturn("camelContext");
 		camelContext.setXmlNode(camelContextXmlNode);
 		final CamelEndpoint endPoint = new CamelEndpoint("imap:host:port");
 		endPoint.setParent(camelContext);

@@ -735,10 +735,6 @@ public abstract class AbstractCamelModelElement {
 		String kind = getKind(name);
 		String javaType = getJavaType(name);
 
-		if (this instanceof CamelContextElement) {
-			kind = "attribute";
-		}
-
 		// this is needed for FUSETOOLS-1884, otherwise some global config
 		// elements lose their children and get corrupted
 		if (getEipByName(CamelUtils.getTranslatedNodeName(getXmlNode())) == null && name.equalsIgnoreCase("id")) {
@@ -971,13 +967,18 @@ public abstract class AbstractCamelModelElement {
 	 * @param e
 	 */
 	private void updateAttribute(String name, Object newValue, Object oldValue, Element e) {
-		String defaultValue = this.underlyingMetaModelObject != null
-				? this.underlyingMetaModelObject.getParameter(name).getDefaultValue() : null;
-		if (defaultValue != null && defaultValue.equals(getMappedValue(newValue))) {
-			// default value -> no need to explicitly set it -> delete
-			// existing
-			e.removeAttribute(name);
-		} else {
+// 
+// whenever we decide to go the optimized xml way then we can simple uncomment the following if clause
+// Remember: once we do that we need to fix some test files to no longer use default values
+//
+
+//		String defaultValue = this.underlyingMetaModelObject != null
+//				? this.underlyingMetaModelObject.getParameter(name).getDefaultValue() : null;
+//		if (defaultValue != null && defaultValue.equals(getMappedValue(newValue))) {
+//			// default value -> no need to explicitly set it -> delete
+//			// existing
+//			e.removeAttribute(name);
+//		} else {
 			// not the default value, so set it
 			e.setAttribute(name, getMappedValue(newValue));
 			if ("id".equals(name) && oldValue != null && !oldValue.equals(newValue)) {
@@ -988,7 +989,7 @@ public abstract class AbstractCamelModelElement {
 				eventMap.put(PROPERTY_KEY_CAMEL_FILE, getCamelFile());
 				eventBroker.send(TOPIC_ID_RENAMING, eventMap);
 			}
-		}
+//		}
 	}
 
 	/**
@@ -1441,7 +1442,7 @@ public abstract class AbstractCamelModelElement {
 	}
 
 	protected boolean isSpecialCase(Node childNode) {
-		return CHOICE_NODE_NAME.equalsIgnoreCase(getTranslatedNodeName()) && OTHERWISE_NODE_NAME.equalsIgnoreCase(CamelUtils.getTranslatedNodeName(childNode));
+		return CHOICE_NODE_NAME.equalsIgnoreCase(getTranslatedNodeName()) && OTHERWISE_NODE_NAME.equalsIgnoreCase(CamelUtils.getTranslatedNodeName(childNode)); 
 	}
 
 	/**
