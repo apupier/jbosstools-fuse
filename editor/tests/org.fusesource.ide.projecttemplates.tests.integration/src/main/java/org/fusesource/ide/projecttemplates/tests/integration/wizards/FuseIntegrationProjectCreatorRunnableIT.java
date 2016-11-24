@@ -74,7 +74,6 @@ import org.fusesource.ide.projecttemplates.wizards.FuseIntegrationProjectCreator
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestWatcher;
 
 /**
