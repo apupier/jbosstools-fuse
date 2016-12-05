@@ -21,6 +21,7 @@ import org.fusesource.ide.camel.model.service.core.model.AbstractCamelModelEleme
 import org.fusesource.ide.camel.model.service.core.model.GlobalDefinitionCamelModelElement;
 import org.fusesource.ide.foundation.core.util.CamelUtils;
 import org.fusesource.ide.foundation.core.util.Strings;
+import org.springframework.ide.eclipse.beans.ui.editor.outline.DelegatingLabelProvider;
 import org.w3c.dom.Node;
 
 class GlobalConfigLabelProvider implements IStyledLabelProvider {
@@ -66,6 +67,8 @@ class GlobalConfigLabelProvider implements IStyledLabelProvider {
 			return getStyledTextForCategory((String) element);
 		} else if (element instanceof AbstractCamelModelElement) {
 			return getStyledTextForCamelModelElement((AbstractCamelModelElement) element);
+		} else if(element instanceof Node) {
+			return new StyledString(new DelegatingLabelProvider().getText(element));
 		}
 		return new StyledString();
 	}
@@ -79,6 +82,8 @@ class GlobalConfigLabelProvider implements IStyledLabelProvider {
 		} else if (element instanceof String) {
 			GlobalConfigCategoryItem cat = camelGlobalConfigEditor.getCategoryForId((String) element);
 			return cat.getIcon();
+		} else if(element instanceof Node) {
+			return new DelegatingLabelProvider().getImage(element);
 		}
 		return null;
 	}

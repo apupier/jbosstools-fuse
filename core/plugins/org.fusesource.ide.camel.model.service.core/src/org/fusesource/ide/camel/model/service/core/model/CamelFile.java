@@ -20,10 +20,8 @@ import java.util.UUID;
 
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.wst.xml.core.internal.XMLCorePlugin;
 import org.fusesource.ide.camel.model.service.core.internal.CamelModelServiceCoreActivator;
 import org.fusesource.ide.camel.model.service.core.io.CamelIOHandler;
@@ -59,7 +57,7 @@ public class CamelFile extends AbstractCamelModelElement implements EventListene
 	/**
 	 * the resource the camel file is stored in
 	 */
-	private IResource resource;
+	private IFile resource;
 	
 	/**
 	 * Spring / Blueprint / Routes
@@ -81,7 +79,7 @@ public class CamelFile extends AbstractCamelModelElement implements EventListene
 	 * 
 	 * @param resource
 	 */
-	public CamelFile(IResource resource) {
+	public CamelFile(IFile resource) {
 		super(null, null);
 		this.resource = resource;
 	}
@@ -259,14 +257,14 @@ public class CamelFile extends AbstractCamelModelElement implements EventListene
 	/**
 	 * @return the resource
 	 */
-	public IResource getResource() {
+	public IFile getResource() {
 		return this.resource;
 	}
 	
 	/**
 	 * @param resource the resource to set
 	 */
-	public void setResource(IResource resource) {
+	public void setResource(IFile resource) {
 		this.resource = resource;
 	}
 	

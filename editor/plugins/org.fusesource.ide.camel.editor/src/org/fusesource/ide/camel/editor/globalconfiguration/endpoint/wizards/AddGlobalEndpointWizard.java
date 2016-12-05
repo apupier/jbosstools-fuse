@@ -42,11 +42,6 @@ public class AddGlobalEndpointWizard extends Wizard implements GlobalConfigurati
 		setNeedsProgressMonitor(true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		super.addPages();
@@ -56,24 +51,11 @@ public class AddGlobalEndpointWizard extends Wizard implements GlobalConfigurati
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.fusesource.ide.camel.editor.provider.ext.
-	 * GlobalConfigurationTypeWizard#getGlobalConfigrationElementNode()
-	 */
 	@Override
 	public Element getGlobalConfigurationElementNode() {
 		return globalConfigurationNode;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.fusesource.ide.camel.editor.provider.ext.
-	 * GlobalConfigurationTypeWizard#setGlobalConfigrationElementNode(org.w3c.
-	 * dom.Element)
-	 */
 	@Override
 	public void setGlobalConfigurationElementNode(Element node) {
 		this.globalConfigurationNode = node;
@@ -86,11 +68,6 @@ public class AddGlobalEndpointWizard extends Wizard implements GlobalConfigurati
 		return component;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		component = globalEndpointPage.getComponentSelected();

@@ -301,6 +301,12 @@
             id="org.fusesource.ide.camel.editor.provider.globalconfigprovider.dataformat"
             name="Data Format">
       </GlobalConfigElement>
+      <GlobalConfigElement
+            category="org.fusesource.ide.camel.editor.globalconfig.FUSE_CATEGORY"
+            class="org.fusesource.ide.camel.editor.globalconfiguration.beans.spring.SpringBeansContributor"
+            id="org.fusesource.ide.camel.editor.provider.globalconfigprovider.globalSpringBeans"
+            name="Spring Bean">
+      </GlobalConfigElement>
    </extension>
    <extension
          point="org.fusesource.ide.editor.dblClickHandler">

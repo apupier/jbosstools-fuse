@@ -10,12 +10,29 @@
  ******************************************************************************/ 
 package org.fusesource.ide.camel.editor.globalconfiguration;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.fusesource.ide.camel.editor.globalconfiguration.beans.spring.SpringBeanUtil;
+import org.fusesource.ide.camel.editor.globalconfiguration.beans.spring.SpringBeansContributor;
+import org.fusesource.ide.camel.model.service.core.model.AbstractCamelModelElement;
+import org.fusesource.ide.camel.model.service.core.model.GlobalDefinitionCamelModelElement;
+import org.springframework.ide.eclipse.config.ui.editors.SpringConfigContentProvider;
+import org.eclipse.wst.xml.core.internal.provisional.document.IDOMDocument;
+import org.eclipse.wst.xml.core.internal.provisional.document.IDOMElement;
+import org.eclipse.wst.xml.core.internal.modelhandler.XMLModelLoader;
+import org.eclipse.wst.sse.core.internal.provisional.IModelLoader;
+import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
+import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 class GlobalConfigContentProvider implements ITreeContentProvider {
 
@@ -54,10 +71,16 @@ class GlobalConfigContentProvider implements ITreeContentProvider {
 			return catIds;
 		} else if (parent instanceof String) {
 			return this.camelGlobalConfigEditor.getModel().get((String)parent).toArray();
+		} else if(parent instanceof GlobalDefinitionCamelModelElement && new SpringBeansContributor().canHandle((AbstractCamelModelElement) parent)) {
+			return new SpringBeanUtil().getChildrenBeans((GlobalDefinitionCamelModelElement) parent).toArray();
 		}
 		
 		return new Object[0];
 	}
+
+	
+
+
 
 	@Override
 	public Object getParent(Object element) {
@@ -66,7 +89,7 @@ class GlobalConfigContentProvider implements ITreeContentProvider {
 
 	@Override
 	public boolean hasChildren(Object element) {
-		return element instanceof String;
+		return element instanceof String || element instanceof AbstractCamelModelElement && new SpringBeansContributor().canHandle((AbstractCamelModelElement) element);
 	}
 
 	@Override

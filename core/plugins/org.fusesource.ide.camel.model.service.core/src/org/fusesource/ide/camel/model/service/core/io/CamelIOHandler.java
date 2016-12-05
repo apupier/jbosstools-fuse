@@ -138,7 +138,7 @@ public class CamelIOHandler {
      * @param res
      * @return
      */
-    protected CamelFile readDocumentToModel(Document document, IResource res) {
+    protected CamelFile readDocumentToModel(Document document, IFile res) {
         CamelFile cf = new CamelFile(null);
         cf.setResource(res);
         cf.setDocument(document);
