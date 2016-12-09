@@ -13,6 +13,7 @@ package org.fusesource.ide.camel.editor.properties;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -674,6 +675,22 @@ public abstract class FusePropertySection extends AbstractPropertySection {
 			txtField.setLayoutData(createPropertyFieldLayoutData());
 			c = txtField;
 
+			// grand Children inside a list of nodes
+		} else if(camelModelElement != null && camelModelElement.getParameter(p.getName()) instanceof List){
+			//TODO: use something better than a text for a list of elements as we have the obvious limitation of not supporting the ","
+			List<String> initialValue = (List<String>)camelModelElement.getParameter(p.getName());
+			String collect = initialValue.stream().collect(Collectors.joining(","));
+			Text txtField = getWidgetFactory().createText(parent, collect, SWT.SINGLE | SWT.LEFT);
+			txtField.addModifyListener(new ModifyListener() {
+				@Override
+				public void modifyText(ModifyEvent e) {
+					Text txt = (Text) e.getSource();
+					camelModelElement.setParameter(p.getName(), Arrays.asList(txt.getText().split(",")));
+				}
+			});
+			txtField.setLayoutData(createPropertyFieldLayoutData());
+			c = txtField;
+			
 			// OTHER
 		} else {
 			String initialValue = null;

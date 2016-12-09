@@ -13,9 +13,11 @@ package org.fusesource.ide.camel.model.service.core.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -40,6 +42,8 @@ import org.w3c.dom.NodeList;
  */
 public abstract class AbstractCamelModelElement {
 
+	private static final String NODE_KIND_VALUE = "value";
+	private static final String DESCRIPTION_NODE_NAME = "description";
 	private static final String NODE_KIND_EXPRESSION = "expression";
 	private static final String NODE_KIND_ATTRIBUTE = "attribute";
 	private static final String NODE_KIND_ELEMENT = "element";
@@ -152,16 +156,15 @@ public abstract class AbstractCamelModelElement {
 	 * @return
 	 */
 	public AbstractCamelModelElement findEndpoint(String uri) {
-		if (getChildElements().isEmpty()) {
-			if (getParameter(URI_PARAMETER_KEY) != null && ((String)getParameter(URI_PARAMETER_KEY)).equals(uri)) {
-				return this;
-			}
-		} else {
-			for (AbstractCamelModelElement cme : getChildElements()) {
-				AbstractCamelModelElement e = cme.findEndpoint(uri);
-				if (e != null) {
-					return e;
+		if (uri != null) {
+			if (getChildElements().isEmpty()) {
+				if (uri.equals(getParameter(URI_PARAMETER_KEY))) {
+					return this;
 				}
+			} else {
+				return getChildElements().stream()
+						.filter(cme -> cme.findEndpoint(uri) != null)
+						.findFirst().orElse(null);
 			}
 		}
 		return null;
@@ -355,7 +358,7 @@ public abstract class AbstractCamelModelElement {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
-		setParameter("description", description);
+		setParameter(DESCRIPTION_NODE_NAME, description);
 	}
 
 	/**
@@ -741,7 +744,7 @@ public abstract class AbstractCamelModelElement {
 
 		// this is needed for FUSETOOLS-1884, otherwise some global config
 		// elements lose their children and get corrupted
-		if (getEipByName(CamelUtils.getTranslatedNodeName(getXmlNode())) == null && name.equalsIgnoreCase("id")) {
+		if (getEipByName(CamelUtils.getTranslatedNodeName(getXmlNode())) == null && "id".equalsIgnoreCase(name)) {
 			kind=NODE_KIND_ATTRIBUTE;
 		}
 
@@ -760,27 +763,71 @@ public abstract class AbstractCamelModelElement {
 						break;
 					}
 				}
-			} else if (kind.equalsIgnoreCase("value")) {
+			} else if (kind.equalsIgnoreCase(NODE_KIND_VALUE)) {
 				e.setTextContent(null);
 			}
 		} else {
 			if (kind == null && value instanceof AbstractCamelModelElement == false) {
-				kind = "value";
+				kind = NODE_KIND_VALUE;
 			}
 			if (kind == null && value instanceof AbstractCamelModelElement) {
 				// special case for nested expressions
 				Node oldChild = getFirstChild(e);
 				Node newChild = ((AbstractCamelModelElement) value).getXmlNode();
 				e.replaceChild(newChild, oldChild);
-			} else if (kind.equalsIgnoreCase(NODE_KIND_ATTRIBUTE)) {
+			} else if (NODE_KIND_ATTRIBUTE.equalsIgnoreCase(kind)) {
 				updateAttribute(name, value, oldValue, e);
-			} else if (kind.equalsIgnoreCase(NODE_KIND_ELEMENT) && name.equals("description")) {
-				updateElementDescription(name, value, e);
-			} else if (kind.equalsIgnoreCase(NODE_KIND_ELEMENT) && javaType.equals("org.apache.camel.model.DataFormatDefinition")) {
+			} else if (NODE_KIND_ELEMENT.equalsIgnoreCase(kind) && "org.apache.camel.model.DataFormatDefinition".equals(javaType)) {
 				updateDataFormatDefinition(value, e);
-			} else if (kind.equalsIgnoreCase(NODE_KIND_EXPRESSION)) {
+			} else if (NODE_KIND_ELEMENT.equalsIgnoreCase(kind) && DESCRIPTION_NODE_NAME.equals(name)) {
+				updateElement(name, value, e);
+			} else if (NODE_KIND_ELEMENT.equalsIgnoreCase(kind) && value instanceof List && !"exception".equals(name)) {
+				NodeList grandChildNodes = ((Element)getXmlNode()).getElementsByTagName(name);//getXmlNode().getChildNodes();
+				Set<Node> nodesToRemove = new HashSet<>();
+				
+				for (int i = 0; i < grandChildNodes.getLength(); i++) {
+					Node grandChildNode = grandChildNodes.item(i);
+					System.out.println("remove child? "+ grandChildNode);
+					if(name.equals(grandChildNode.getLocalName())){
+						//getXmlNode().removeChild(grandChildNode);
+						nodesToRemove.add(grandChildNode);
+//						grandChildNode.getParentNode().removeChild(grandChildNode);
+//						System.out.println("remove child: "+ grandChildNode + grandChildNode.getTextContent());
+					}
+				}
+				
+				
+				for (Node nodeToRemove : nodesToRemove) {
+					System.out.println("current content just before remove:");
+					for (int i =0 ; i < getXmlNode().getChildNodes().getLength(); i++){
+						System.out.println(getXmlNode().getChildNodes().item(i) + getXmlNode().getChildNodes().item(i).getTextContent());
+					}
+					System.out.println("end of display of current conten just before remove");
+					Node removedChild = nodeToRemove.getParentNode().removeChild(nodeToRemove);
+					System.out.println("current content just after remove:");
+					for (int i =0 ; i < getXmlNode().getChildNodes().getLength(); i++){
+						System.out.println(getXmlNode().getChildNodes().item(i) + getXmlNode().getChildNodes().item(i).getTextContent());
+					}
+					System.out.println("end of display of current conten just after remove");
+					System.out.println("is aprent still available?? "+ removedChild.getParentNode());
+				}
+
+				for(Object childInTheList : (List<?>)value){
+					Element grandChild = createElement(name, determineNSPrefixFromParent());
+					System.out.println("child with name: "+ childInTheList);
+					grandChild.setTextContent("pilou"+childInTheList.toString());
+					getXmlNode().appendChild(grandChild);
+				}
+				
+				System.out.println("content at the end:");
+				for (int i =0 ; i < getXmlNode().getChildNodes().getLength(); i++){
+					System.out.println(getXmlNode().getChildNodes().item(i) + getXmlNode().getChildNodes().item(i).getTextContent());
+				}
+				System.out.println("end of display of content at the end");
+				
+			} else if (NODE_KIND_EXPRESSION.equalsIgnoreCase(kind)) {
 				updateExpression(name, value, e);
-			} else if (kind.equalsIgnoreCase("value")) {
+			} else if (NODE_KIND_VALUE.equalsIgnoreCase(kind)) {
 				e.setTextContent(getMappedValue(value));
 			}
 		}
@@ -859,7 +906,7 @@ public abstract class AbstractCamelModelElement {
 				Object oValue = exp.getParameter(pKey);
 				// expressions shouldn't have expression attributes but
 				// values
-				if ("value".equalsIgnoreCase(subEip.getParameter(pKey).getKind())) {
+				if (NODE_KIND_VALUE.equalsIgnoreCase(subEip.getParameter(pKey).getKind())) {
 					if (oValue != null && oValue.toString().trim().length() > 0) {
 						((Element) subNode).setNodeValue(oValue.toString());
 					}
@@ -924,12 +971,33 @@ public abstract class AbstractCamelModelElement {
 				Object oValue = df.getParameter(pKey);
 				// expressions shouldn't have expression attributes but
 				// values
-				if ("value".equalsIgnoreCase(subEip.getParameter(pKey).getKind())) {
-					if (oValue != null && oValue.toString().trim().length() > 0) {
+				Parameter subEipParameter = subEip.getParameter(pKey);
+				if (oValue != null && oValue.toString().trim().length() > 0) {
+					if (NODE_KIND_VALUE.equalsIgnoreCase(subEipParameter.getKind())) {
 						((Element) subNode).setNodeValue(oValue.toString());
-					}
-				} else {
-					if (oValue != null && oValue.toString().trim().length() > 0) {
+					} else if(isElementKind(subEipParameter) && isArrayType(subEipParameter)) {
+//						subNode.getAttributes()
+						NodeList grandChildNodes = subNode.getChildNodes();
+						
+						if(oValue instanceof List){
+						for (int i = 0; i < grandChildNodes.getLength(); i++) {
+							Node grandChildNode = grandChildNodes.item(i);
+							if(pKey.equals(grandChildNode.getLocalName())){
+								subNode.removeChild(grandChildNode);
+							}
+							
+							System.out.println(grandChildNode);
+						}
+							
+							for(Object childInTheList : (List<?>)oValue){
+								Element grandChild = createElement(pKey, determineNSPrefixFromParent());
+								grandChild.setTextContent(childInTheList.toString());
+								subNode.appendChild(grandChild);
+							}
+						}
+						
+						System.out.println("weee");
+					} else {
 						((Element) subNode).setAttribute(pKey, oValue.toString());
 					}
 				}
@@ -941,9 +1009,10 @@ public abstract class AbstractCamelModelElement {
 	 * @param name
 	 * @param value
 	 * @param e
+	 * 
+	 * In this case, we have subnodes to handle.
 	 */
-	private void updateElementDescription(String name, Object value, Element e) {
-		// description element handling
+	private void updateElement(String name, Object value, Element e) {
 		Eip subEip = getEipByName(name);
 		if (subEip != null) {
 			// seems this parameter is another eip type -> we need to
@@ -1095,7 +1164,7 @@ public abstract class AbstractCamelModelElement {
 					} else {
 						parseBasicElementAttribute(param);
 					}
-				} else if ("value".equalsIgnoreCase(param.getKind())) {
+				} else if (NODE_KIND_VALUE.equalsIgnoreCase(param.getKind())) {
 					parseValueAttribute(param);
 				} else if (isAnExpressionGuessedByKind(param)) {
 					parseExpressionKindAttribute(param);
@@ -1140,7 +1209,7 @@ public abstract class AbstractCamelModelElement {
 			String val = descNode.getTextContent();
 			if (val != null) {
 				setParameter(param.getName(), val);
-				if ("description".equalsIgnoreCase(param.getName())) {
+				if (DESCRIPTION_NODE_NAME.equalsIgnoreCase(param.getName())) {
 					setDescription(val);
 				}
 			}
@@ -1191,7 +1260,7 @@ public abstract class AbstractCamelModelElement {
 		String val = getXmlNode().getTextContent();
 		if (val != null) {
 			setParameter(param.getName(), val);
-			if ("description".equalsIgnoreCase(param.getName())) {
+			if (DESCRIPTION_NODE_NAME.equalsIgnoreCase(param.getName())) {
 				setDescription(val);
 			}
 		}
@@ -1384,8 +1453,9 @@ public abstract class AbstractCamelModelElement {
 			Iterator<Parameter> it = eip.getParameters().iterator();
 			while (it.hasNext()) {
 				Parameter p = it.next();
-				if (isElementKind(p) && isArrayType(p)
-						&& p.getName().equals("exception") == false) {
+				if (isElementKind(p)
+						&& isArrayType(p)
+						&& !"exception".equals(p.getName())) {
 					return true;
 				}
 			}
