@@ -10,7 +10,17 @@
  ******************************************************************************/ 
 package org.fusesource.ide.projecttemplates.adopters.configurators;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
@@ -25,20 +35,18 @@ import org.fusesource.ide.projecttemplates.util.camel.CamelFacetDataModelProvide
 import org.fusesource.ide.projecttemplates.util.camel.ICamelFacetDataModelProperties;
 
 /**
- * this configurator does nothing. it just provides additional helper 
+ * this configurator provides additional helper 
  * methods to retrieve a facet data model and to install a facet on the project
  * 
  * @author lhein
  */
 public class DefaultTemplateConfigurator implements TemplateConfiguratorSupport {
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.fusesource.ide.projecttemplates.adopters.configurators.TemplateConfiguratorSupport#configure(org.eclipse.core.resources.IProject, org.fusesource.ide.projecttemplates.util.NewProjectMetaData, org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	
+	private static final String PLACEHOLDER_PROJECTNAME_IN_LAUNCH_CONFIGURATION = "%%%PLACEHOLDER_PROJECTNAME_IN_LAUNCH_CONFIGURATION%%%";
+	
 	@Override
 	public boolean configure(IProject project, NewProjectMetaData metadata, IProgressMonitor monitor) {
-		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.DefaultTemplateConfigurator_ConfiguringJavaProjectMonitorMessage, 8);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.DefaultTemplateConfigurator_ConfiguringJavaProjectMonitorMessage, 9);
 		IProjectFacetVersion javaFacet = ProjectFacetsManager.getProjectFacet("jst.java").getDefaultVersion(); //$NON-NLS-1$
 		try {
 			// add java facet
@@ -52,11 +60,44 @@ public class DefaultTemplateConfigurator implements TemplateConfiguratorSupport 
 			project.refreshLocal(IProject.DEPTH_INFINITE, subMonitor.newChild(1));
 			project.getFile(".classpath").delete(true, subMonitor.newChild(1)); //$NON-NLS-1$
 			project.refreshLocal(IProject.DEPTH_INFINITE, subMonitor.newChild(1));
+			configureLaunchConfiguration(project, subMonitor.newChild(1));
 		} catch (CoreException ex) {
 			ProjectTemplatesActivator.pluginLog().logError(ex);
 			return false;
 		}
+		
+		
 		return true;
+	}
+
+	private void configureLaunchConfiguration(IProject project, SubMonitor monitor) throws CoreException {
+		IFolder fuseToolingSettingsFolder = project.getFolder(".settings/fusetooling");
+		if(fuseToolingSettingsFolder.exists()){
+			IResource[] potentialLaunchConfigurations = fuseToolingSettingsFolder.members();
+			SubMonitor subMonitor = SubMonitor.convert(monitor, potentialLaunchConfigurations.length + 1);
+			for(IResource potentialLaunchConfiguration : potentialLaunchConfigurations) {
+				if(potentialLaunchConfiguration.getName().endsWith(".launch") && potentialLaunchConfiguration instanceof IFile) {
+					replaceInLaunchConfiguration(project, (IFile)potentialLaunchConfiguration);
+				}
+				subMonitor.worked(1);
+			}
+			fuseToolingSettingsFolder.refreshLocal(IResource.DEPTH_ONE, subMonitor.split(1));
+		}
+		
+	}
+
+	private void replaceInLaunchConfiguration(IProject project, IFile launchConfiguration) {
+		Path templateLaunchConfiguration = launchConfiguration.getLocation().toFile().toPath();
+		Path targetLaunchConfiguration = templateLaunchConfiguration.getParent().resolve("test.launch");
+		try (Stream<String> lines = Files.lines(templateLaunchConfiguration)) {
+			List<String> replaced = lines
+					.map(line-> line.replaceAll(PLACEHOLDER_PROJECTNAME_IN_LAUNCH_CONFIGURATION, project.getName()))
+					.collect(Collectors.toList());
+			Files.write(targetLaunchConfiguration, replaced);
+			templateLaunchConfiguration.toFile().delete();
+		} catch (IOException e) {
+			ProjectTemplatesActivator.pluginLog().logError(e);
+		}
 	}
 
 	/**
