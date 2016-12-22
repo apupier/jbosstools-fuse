@@ -10,6 +10,7 @@
  ******************************************************************************/ 
 package org.fusesource.ide.projecttemplates.adopters.configurators;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,7 +43,9 @@ import org.fusesource.ide.projecttemplates.util.camel.ICamelFacetDataModelProper
  */
 public class DefaultTemplateConfigurator implements TemplateConfiguratorSupport {
 	
-	private static final String PLACEHOLDER_PROJECTNAME_IN_LAUNCH_CONFIGURATION = "%%%PLACEHOLDER_PROJECTNAME_IN_LAUNCH_CONFIGURATION%%%";
+	private static final String LAUNCH_CONFIGURATION_FILE_EXTENSION = ".launch";
+	private static final String SETTINGS_FUSETOOLING = ".settings/fusetooling";
+	private static final String PLACEHOLDER_PROJECTNAME_IN_LAUNCH_CONFIGURATION = "%%%PLACEHOLDER_PROJECTNAME%%%";
 	
 	@Override
 	public boolean configure(IProject project, NewProjectMetaData metadata, IProgressMonitor monitor) {
@@ -65,38 +68,44 @@ public class DefaultTemplateConfigurator implements TemplateConfiguratorSupport 
 			ProjectTemplatesActivator.pluginLog().logError(ex);
 			return false;
 		}
-		
-		
 		return true;
 	}
 
 	private void configureLaunchConfiguration(IProject project, SubMonitor monitor) throws CoreException {
-		IFolder fuseToolingSettingsFolder = project.getFolder(".settings/fusetooling");
+		IFolder fuseToolingSettingsFolder = project.getFolder(SETTINGS_FUSETOOLING);
 		if(fuseToolingSettingsFolder.exists()){
 			IResource[] potentialLaunchConfigurations = fuseToolingSettingsFolder.members();
 			SubMonitor subMonitor = SubMonitor.convert(monitor, potentialLaunchConfigurations.length + 1);
 			for(IResource potentialLaunchConfiguration : potentialLaunchConfigurations) {
-				if(potentialLaunchConfiguration.getName().endsWith(".launch") && potentialLaunchConfiguration instanceof IFile) {
+				if(potentialLaunchConfiguration.getName().endsWith(LAUNCH_CONFIGURATION_FILE_EXTENSION) && potentialLaunchConfiguration instanceof IFile) {
 					replaceInLaunchConfiguration(project, (IFile)potentialLaunchConfiguration);
 				}
 				subMonitor.worked(1);
 			}
 			fuseToolingSettingsFolder.refreshLocal(IResource.DEPTH_ONE, subMonitor.split(1));
 		}
-		
 	}
 
 	private void replaceInLaunchConfiguration(IProject project, IFile launchConfiguration) {
 		Path templateLaunchConfiguration = launchConfiguration.getLocation().toFile().toPath();
-		Path targetLaunchConfiguration = templateLaunchConfiguration.getParent().resolve("test.launch");
+		String projectName = project.getName();
+		String targetFileName = launchConfiguration.getName().replaceAll(PLACEHOLDER_PROJECTNAME_IN_LAUNCH_CONFIGURATION, projectName);
+		Path targetLaunchConfiguration = templateLaunchConfiguration.getParent().resolve(targetFileName);
 		try (Stream<String> lines = Files.lines(templateLaunchConfiguration)) {
 			List<String> replaced = lines
-					.map(line-> line.replaceAll(PLACEHOLDER_PROJECTNAME_IN_LAUNCH_CONFIGURATION, project.getName()))
+					.map(line-> line.replaceAll(PLACEHOLDER_PROJECTNAME_IN_LAUNCH_CONFIGURATION, projectName))
 					.collect(Collectors.toList());
 			Files.write(targetLaunchConfiguration, replaced);
-			templateLaunchConfiguration.toFile().delete();
+			cleanTemplate(templateLaunchConfiguration);
 		} catch (IOException e) {
 			ProjectTemplatesActivator.pluginLog().logError(e);
+		}
+	}
+
+	private void cleanTemplate(Path templateLaunchConfiguration) {
+		File templateLaunchConfigurationFile = templateLaunchConfiguration.toFile();
+		if(!templateLaunchConfigurationFile.delete()){
+			templateLaunchConfigurationFile.deleteOnExit();
 		}
 	}
 
