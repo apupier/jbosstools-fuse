@@ -104,10 +104,10 @@ public abstract class FuseIntegrationProjectCreatorRunnableIT {
 	public void setup() throws Exception {
 		ProjectTemplatesIntegrationTestsActivator.pluginLog().logInfo("Starting setup for "+ FuseIntegrationProjectCreatorRunnableIT.class.getSimpleName());
 		CommonTestUtils.prepareIntegrationTestLaunch(SCREENSHOT_FOLDER);
-
-		if("2.18.1.redhat-000012".equals(camelVersion) || "2.17.0.redhat-630224".equals(camelVersion)){
-			new StagingRepositoriesPreferenceInitializer().setStagingRepositoriesEnablement(true);
-		}
+//		Uncomment and update version when a staging version will be used
+//		if("2.18.1.redhat-000012".equals(camelVersion)){
+//			new StagingRepositoriesPreferenceInitializer().setStagingRepositoriesEnablement(true);
+//		}
 		ProjectTemplatesIntegrationTestsActivator.pluginLog().logInfo("End setup for "+ FuseIntegrationProjectCreatorRunnableIT.class.getSimpleName());
 	}
 
