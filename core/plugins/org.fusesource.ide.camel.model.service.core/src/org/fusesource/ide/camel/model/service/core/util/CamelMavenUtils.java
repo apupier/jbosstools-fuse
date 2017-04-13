@@ -146,19 +146,21 @@ public class CamelMavenUtils {
 		IMavenProjectFacade m2facade = getMavenProjectFacade(project);
 		
 		List<Dependency> deps = new ArrayList<>();
-		try {
-			MavenProject m2Project = m2facade.getMavenProject(new NullProgressMonitor());
-			deps.addAll(m2Project.getCompileDependencies());
-			deps.addAll(m2Project.getDependencies());
-			deps.addAll(m2Project.getRuntimeDependencies());
-			deps.addAll(m2Project.getSystemDependencies());
-			deps.addAll(m2Project.getTestDependencies());
-			if (m2Project.getDependencyManagement() != null && includeManagedDependencies) {
-				deps.addAll(m2Project.getDependencyManagement().getDependencies());
+		if(m2facade != null) {
+			try {
+				MavenProject m2Project = m2facade.getMavenProject(new NullProgressMonitor());
+				deps.addAll(m2Project.getCompileDependencies());
+				deps.addAll(m2Project.getDependencies());
+				deps.addAll(m2Project.getRuntimeDependencies());
+				deps.addAll(m2Project.getSystemDependencies());
+				deps.addAll(m2Project.getTestDependencies());
+				if (m2Project.getDependencyManagement() != null && includeManagedDependencies) {
+					deps.addAll(m2Project.getDependencyManagement().getDependencies());
+				}
+				translateVariables(deps, m2Project.getModel());
+			} catch (CoreException ex) {
+				CamelModelServiceCoreActivator.pluginLog().logError(ex);
 			}
-			translateVariables(deps, m2Project.getModel());
-		} catch (CoreException ex) {
-			CamelModelServiceCoreActivator.pluginLog().logError(ex);
 		}
 		
 		return deps;
