@@ -18,6 +18,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -33,8 +35,6 @@ import org.eclipse.jst.server.core.FacetUtil;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -69,6 +69,7 @@ import org.fusesource.ide.projecttemplates.internal.ProjectTemplatesActivator;
 public class FuseIntegrationProjectWizardRuntimeAndCamelPage extends WizardPage {
 
 	static final String UNKNOWN_CAMEL_VERSION = "unknown"; //$NON-NLS-1$
+	private static final Pattern MAVEN_VERSION_PATTERN = Pattern.compile("^(\\d+){1}(\\.\\d+){1}(\\.\\d+){1}?((\\.|\\-).*)?$");
 
 	private ComboViewer runtimeComboViewer;
 	private Map<String, IRuntime> serverRuntimes;
@@ -171,7 +172,7 @@ public class FuseIntegrationProjectWizardRuntimeAndCamelPage extends WizardPage 
 		camelVersionCombo = new Combo(camelGrp, SWT.RIGHT | SWT.DROP_DOWN);
 		GridData camelComboData = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
 		camelVersionCombo.setLayoutData(camelComboData);
-		camelVersionCombo.setItems(CamelCatalogUtils.getOfficialSupportedCamelCatalogVersions().stream().toArray(String[]::new));
+		camelVersionCombo.setItems(CamelCatalogUtils.getAllCamelCatalogVersions().stream().toArray(String[]::new));
 		camelVersionCombo.setText(CamelCatalogUtils.getLatestCamelVersion());
 		camelVersionCombo.setToolTipText(Messages.newProjectWizardRuntimePageCamelDescription);
 		camelVersionCombo.addSelectionListener(new SelectionAdapter() {
@@ -184,23 +185,11 @@ public class FuseIntegrationProjectWizardRuntimeAndCamelPage extends WizardPage 
 				validate();
 			}
 		});
-		camelVersionCombo.addFocusListener(new FocusAdapter() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.FocusAdapter#focusLost(org.eclipse.swt.events.FocusEvent)
-			 */
-			@Override
-			public void focusLost(FocusEvent e) {
-				super.focusLost(e);
-				validate();
-			}
+		camelVersionCombo.addModifyListener(new ModifyListener() {
 			
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.FocusAdapter#focusGained(org.eclipse.swt.events.FocusEvent)
-			 */
 			@Override
-			public void focusGained(FocusEvent e) {
-				super.focusGained(e);
-				setPageComplete(false);
+			public void modifyText(ModifyEvent e) {
+				validate();
 			}
 		});
 		
@@ -380,10 +369,19 @@ public class FuseIntegrationProjectWizardRuntimeAndCamelPage extends WizardPage 
 			if (!Widgets.isDisposed(camelVersionCombo)){
 				camelVersionCombo.setEnabled(true);
 			}
-
-			if (!Widgets.isDisposed(camelInfoText)) {
-				camelInfoText.setText(""); //$NON-NLS-1$
-			}			
+			
+			if (!Widgets.isDisposed(camelVersionCombo)) {
+				String selectedCamelVersion = camelVersionCombo.getText();
+				if (!isValidCamelVersionSyntax(selectedCamelVersion)) {
+					if (!Widgets.isDisposed(camelInfoText)) {
+						camelInfoText.setText(NLS.bind(Messages.newProjectWizardRuntimePageCamelVersionInvalidSyntaxWarning, selectedCamelVersion)); //$NON-NLS-1$
+					}
+				} else {
+					if (!Widgets.isDisposed(camelInfoText)) {
+						camelInfoText.setText(""); //$NON-NLS-1$
+					}
+				}
+			}
 		}
 		
 		if (!Widgets.isDisposed(warningIconLabel) && !Widgets.isDisposed(camelInfoText)) { 
@@ -395,6 +393,11 @@ public class FuseIntegrationProjectWizardRuntimeAndCamelPage extends WizardPage 
 							!Strings.isBlank(camelVersionCombo.getText()) &&
 							!warningIconLabel.isVisible());
 		}
+	}
+	
+	private boolean isValidCamelVersionSyntax(String camelVersion) {
+		Matcher m = MAVEN_VERSION_PATTERN.matcher(camelVersion);
+		return m.matches();
 	}
 	
 	public void validateCamelVersion() {
