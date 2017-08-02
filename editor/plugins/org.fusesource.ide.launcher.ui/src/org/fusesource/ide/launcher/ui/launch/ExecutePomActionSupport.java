@@ -13,6 +13,7 @@ package org.fusesource.ide.launcher.ui.launch;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -371,7 +372,7 @@ public abstract class ExecutePomActionSupport implements ILaunchShortcut, IExecu
 	 * @return
 	 */
 	protected String getBasicLaunchConfigurationName(IFile camelFile) {
-		return "Run " + camelFile.getName() + " as Local CamelContext";
+		return MessageFormat.format("Run {0} ({1}) as Local CamelContext", camelFile.getProject().getName(), camelFile.getName());
 	}
 
 	/**

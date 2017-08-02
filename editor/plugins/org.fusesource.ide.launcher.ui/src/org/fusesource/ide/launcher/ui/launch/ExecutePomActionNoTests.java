@@ -49,8 +49,9 @@ public class ExecutePomActionNoTests extends ExecutePomActionSupport {
 	protected boolean isTestStrategyMatching(ILaunchConfiguration configuration) {
 		return isSkipTest(configuration);
 	}
-
-	protected String getBasicLaunchConfigurationName(IContainer basedir, IFile camelFile, String launchSafeGoalName) {
+	
+	@Override
+	protected String getBasicLaunchConfigurationName( IFile camelFile) {
 		return super.getBasicLaunchConfigurationName(camelFile) + " (without Tests)";
 	}
 }
