@@ -1,0 +1,1 @@
+The aether-spi jar is in fact a 1.1.0-SNAPSHOT that I built locally but I found no other way to test it efficiently on CI.
