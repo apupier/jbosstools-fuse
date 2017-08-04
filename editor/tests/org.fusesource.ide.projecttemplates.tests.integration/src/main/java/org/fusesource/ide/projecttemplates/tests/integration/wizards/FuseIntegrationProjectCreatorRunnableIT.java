@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +49,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.m2e.actions.MavenLaunchConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
@@ -387,6 +389,14 @@ public abstract class FuseIntegrationProjectCreatorRunnableIT {
 				System.out.println("Maven output file path: "+mavenOutputFilePath);
 				workingCopy.setAttribute("org.eclipse.debug.ui.ATTR_CAPTURE_IN_FILE", mavenOutputFilePath);
 				workingCopy.setAttribute("org.eclipse.debug.ui.M2_DEBUG_OUTPUT", true);
+				List<String> props;
+				try {
+					props = workingCopy.getAttribute(MavenLaunchConstants.ATTR_PROPERTIES, new ArrayList<String>());
+					props.add("-Daether.connector.resumeDownloads=false");
+					workingCopy.setAttribute(MavenLaunchConstants.ATTR_PROPERTIES, props);
+				} catch (CoreException e) {
+					System.out.println(e);
+				}
 			}
 			
 		};
