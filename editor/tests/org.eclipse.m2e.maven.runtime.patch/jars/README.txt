@@ -1,1 +1,1 @@
-The aether-spi jar is in fact a 1.1.0-SNAPSHOT that I built locally but I found no other way to test it efficiently on CI.
+The aether-spi jar is in fact a version from my branch apupier/FixconcurrentDownload-aether-10.2.v20150114-branch that I built locally but I found no other way to test it efficiently on CI.
