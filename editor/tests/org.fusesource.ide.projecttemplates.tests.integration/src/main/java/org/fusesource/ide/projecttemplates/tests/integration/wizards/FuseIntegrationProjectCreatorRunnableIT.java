@@ -148,8 +148,7 @@ public abstract class FuseIntegrationProjectCreatorRunnableIT {
 			boolean projectSuccesfullyDeleted = false;
 			while(!projectSuccesfullyDeleted ){
 				try{
-					//FIXME: deactivated for investigation on Corrupted Jars FUSETOOLS-2392, it will allow to keep some "*.dumpstream" files that are generated in target folder
-					//project.delete(true, true, new NullProgressMonitor());
+					project.delete(true, true, new NullProgressMonitor());
 				} catch(Exception e){
 					//some lock/stream kept on camel-context.xml surely by the killed process, need time to let OS such as Windows to re-allow deletion
 					readAndDispatch(0);
