@@ -404,8 +404,7 @@ public abstract class FuseIntegrationProjectCreatorRunnableIT {
 
 			@Override
 			public void executeOnSuccess() {
-				//Won't happen
-				deploymentFinished = true;
+				// don't care
 			}
 
 			@Override
