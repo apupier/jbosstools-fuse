@@ -20,7 +20,7 @@ import org.fusesource.ide.launcher.Activator;
 public class ThreadGarbageCollector extends Job {
 	
 	private static final int TIME_BETWEEN_GARBAGE_COLLECTION = 60000; // 1 minute
-	public static final long THREAD_LIFE_DURATION = 10*60*1000L; // 10 minutes
+	public static final long THREAD_LIFE_DURATION = 20*60*1000L; // 20 minutes
 	
 	private final CamelDebugTarget camelDebugTarget;
 	
