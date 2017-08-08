@@ -267,26 +267,10 @@
 					<useUIThread>true</useUIThread>
 					<useUIHarness>true</useUIHarness>
 					<includes>
-						<include>**/*IT.class</include>
+						<include>**/FuseIntegrationProjectCreatorRunnableForOSESringBootIT.class</include>
 					</includes>
 					<argLine>${tycho.testArgLine} -XX:+HeapDumpOnOutOfMemoryError ${platformSystemProperties} ${systemProperties} -Dusage_reporting_enabled=false -Dorg.jboss.tools.vpe.loadxulrunner=false -Dgroovy.grape.report.downloads=true -Divy.message.logger.level=4 -Dsun.net.client.defaultConnectTimeout=30000 -Dsun.net.client.defaultReadTimeout=30000 -debug -Daether.connector.resumeDownloads=false</argLine>
 					<osgiDataDirectory>${project.basedir}/target/work sp@cé</osgiDataDirectory>
-				</configuration>
-			</plugin>
-			
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>target-platform-configuration</artifactId>
-				<configuration>
-					<dependency-resolution>
-						<extraRequirements>
-							<requirement>
-								<type>p2-installable-unit</type>
-								<id>org.eclipse.m2e.maven.runtime.patch</id>
-								<versionRange>0.0.0</versionRange>
-							</requirement>
-						</extraRequirements>
-					</dependency-resolution>
 				</configuration>
 			</plugin>
 		</plugins>
