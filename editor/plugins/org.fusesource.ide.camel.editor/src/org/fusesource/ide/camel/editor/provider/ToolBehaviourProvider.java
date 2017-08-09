@@ -69,6 +69,7 @@ import org.fusesource.ide.camel.editor.features.custom.GoIntoContainerFeature;
 import org.fusesource.ide.camel.editor.features.custom.SetEndpointBreakpointFeature;
 import org.fusesource.ide.camel.editor.internal.CamelEditorUIActivator;
 import org.fusesource.ide.camel.editor.internal.UIMessages;
+import org.fusesource.ide.camel.editor.palette.WhiteListPalette;
 import org.fusesource.ide.camel.editor.provider.ext.ICustomPaletteEntry;
 import org.fusesource.ide.camel.editor.provider.ext.PaletteCategoryItemProvider;
 import org.fusesource.ide.camel.editor.utils.CamelUtils;
@@ -103,62 +104,9 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
 	static final int OFFSET_Y_BREAKPOINT_DECORATOR = 2;
 
 	private static Map<ICreateFeature, IConfigurationElement> paletteItemExtensions = new HashMap<>();
+	public static final Set<String> COMPONENTS_FROM_EXTENSION_POINTS = new HashSet<>();
 
-	private static final List<String> CONNECTORS_WHITELIST;
-	private static final Set<String> COMPONENTS_FROM_EXTENSION_POINTS = new HashSet<>();
-
-	static {
-		CONNECTORS_WHITELIST = new ArrayList<>();
-
-		CONNECTORS_WHITELIST.add("activemq");
-		CONNECTORS_WHITELIST.add("atom");
-		CONNECTORS_WHITELIST.add("controlbus");
-		CONNECTORS_WHITELIST.add("cxf");
-		CONNECTORS_WHITELIST.add("cxfrs");
-		CONNECTORS_WHITELIST.add("cxfbean");
-		CONNECTORS_WHITELIST.add("direct");
-		CONNECTORS_WHITELIST.add("direct-vm");
-		CONNECTORS_WHITELIST.add("ejb");
-		CONNECTORS_WHITELIST.add("file");
-		CONNECTORS_WHITELIST.add("ftp");
-		CONNECTORS_WHITELIST.add("ftps");
-		CONNECTORS_WHITELIST.add("sftp");
-		CONNECTORS_WHITELIST.add("imap");
-		CONNECTORS_WHITELIST.add("imaps");
-		// CONNECTORS_WHITELIST.add("infinispan"); // abandoned since fuse 6.2.0
-		CONNECTORS_WHITELIST.add("jdbc");
-		CONNECTORS_WHITELIST.add("jgroups");
-		CONNECTORS_WHITELIST.add("jms");
-		CONNECTORS_WHITELIST.add("language");
-		CONNECTORS_WHITELIST.add("linkedin");
-		CONNECTORS_WHITELIST.add("mina2");
-		CONNECTORS_WHITELIST.add("mqtt");
-		CONNECTORS_WHITELIST.add("mvel");
-		CONNECTORS_WHITELIST.add("netty");
-		CONNECTORS_WHITELIST.add("netty-http");
-		CONNECTORS_WHITELIST.add("netty4");
-		CONNECTORS_WHITELIST.add("netty4-http");
-		CONNECTORS_WHITELIST.add("pop3");
-		CONNECTORS_WHITELIST.add("pop3s");
-		CONNECTORS_WHITELIST.add("quartz");
-		CONNECTORS_WHITELIST.add("quartz2");
-		CONNECTORS_WHITELIST.add("restlet");
-		CONNECTORS_WHITELIST.add("rss");
-		CONNECTORS_WHITELIST.add("salesforce");
-		CONNECTORS_WHITELIST.add("sap-netweaver");
-		CONNECTORS_WHITELIST.add("scheduler");
-		CONNECTORS_WHITELIST.add("seda");
-		CONNECTORS_WHITELIST.add("servlet");
-		CONNECTORS_WHITELIST.add("smtp");
-		CONNECTORS_WHITELIST.add("smtps");
-		CONNECTORS_WHITELIST.add("snmp");
-		CONNECTORS_WHITELIST.add("sql");
-		CONNECTORS_WHITELIST.add("timer");
-		CONNECTORS_WHITELIST.add("vm");
-		CONNECTORS_WHITELIST.add("xquery");
-		CONNECTORS_WHITELIST.add("xslt");
-	}
-
+	
 	/**
 	 * constructor
 	 * 
@@ -762,6 +710,6 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
 	 * @return
 	 */
 	public boolean shouldBeIgnored(String connectorId) {
-		return !CONNECTORS_WHITELIST.contains(connectorId) && !COMPONENTS_FROM_EXTENSION_POINTS.contains(connectorId);
+		return !new WhiteListPalette().getWhiteList().contains(connectorId) && !COMPONENTS_FROM_EXTENSION_POINTS.contains(connectorId);
 	}
 }

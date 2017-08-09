@@ -21,6 +21,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.PlatformUI;
 import org.fusesource.ide.camel.editor.internal.UIMessages;
+import org.fusesource.ide.camel.editor.palette.WhiteListPaletteConstants;
+import org.fusesource.ide.camel.editor.palette.WhiteListPaletteFieldEditor;
 import org.fusesource.ide.camel.model.service.core.util.LanguageUtils;
 import org.fusesource.ide.preferences.PreferenceManager;
 import org.fusesource.ide.preferences.PreferencesConstants;
@@ -83,6 +85,9 @@ implements IWorkbenchPreferencePage, IWorkbenchPropertyPage {
 				getFieldEditorParent());
 
 		addField(gridVisibilityEditor);
+		
+		addField(new WhiteListPaletteFieldEditor(getFieldEditorParent()));
+		
 
 		// Sets up the context sensitive help for this page
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getFieldEditorParent(), "org.fusesource.ide.camel.editor.editorConfig");
