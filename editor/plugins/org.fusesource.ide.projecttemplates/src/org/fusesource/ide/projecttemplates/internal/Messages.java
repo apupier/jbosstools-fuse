@@ -109,6 +109,8 @@ public class Messages extends NLS {
 
 	public static String UnzipStreamCreator_UnzippingTemplateFileMonitorMessage;
 	
+	public static String CamelCatalogVersionNotMatching;
+	
 	static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
