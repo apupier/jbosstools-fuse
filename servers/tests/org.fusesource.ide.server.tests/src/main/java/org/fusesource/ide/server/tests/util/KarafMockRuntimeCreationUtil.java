@@ -27,6 +27,9 @@ public final class KarafMockRuntimeCreationUtil {
 	public static final String KARAF_2x = "org.fusesource.ide.karaf.runtime.2x";
 	public static final String KARAF_30 = "org.fusesource.ide.karaf.runtime.30";
 	public static final String KARAF_3x = "org.fusesource.ide.karaf.runtime.3x";	
+	public static final String KARAF_40 = "org.fusesource.ide.karaf.runtime.40";
+	public static final String KARAF_41 = "org.fusesource.ide.karaf.runtime.41";
+	public static final String KARAF_4x = "org.fusesource.ide.karaf.runtime.4x";
 	
 	public static final String[] SUPPORTED_2X_RUNTIMES = new String[] {
 		KARAF_22, KARAF_23
@@ -34,6 +37,10 @@ public final class KarafMockRuntimeCreationUtil {
 	
 	public static final String[] SUPPORTED_3X_RUNTIMES = new String[] {
 		KARAF_30 
+	};
+	
+	public static final String[] SUPPORTED_4X_RUNTIMES = new String[] {
+		KARAF_40, KARAF_41
 	};
 	
 	/**
@@ -80,6 +87,28 @@ public final class KarafMockRuntimeCreationUtil {
 		return runtimeCreated;
 	}
 	
+	/**
+	 * creates a mock runtime folder structure 
+	 * 
+	 * @param runtimeId		the runtime type id to use
+	 * @param runtimePath	the path where to create the structure
+	 * @return	true on success
+	 */
+	public static boolean create4xRuntimeMock(String runtimeId, IPath runtimePath) {
+		boolean runtimeCreated = true;
+		
+		if (isSupported4xRuntime(runtimeId)) {
+			createBaseKarafFolderSkeleton(runtimePath);
+			try {
+				copyKarafJarToSkeleton(runtimeId, runtimePath);
+			} catch (CoreException ex) {
+				runtimeCreated = false;
+			}
+		}		
+		
+		return runtimeCreated;
+	}
+	
 	private static boolean isSupported2xRuntime (String runtimeId) {
 		for (String id : SUPPORTED_2X_RUNTIMES) {
 			if (id.equals(runtimeId)) return true;
@@ -89,6 +118,13 @@ public final class KarafMockRuntimeCreationUtil {
 	
 	private static boolean isSupported3xRuntime (String runtimeId) {
 		for (String id : SUPPORTED_3X_RUNTIMES) {
+			if (id.equals(runtimeId)) return true;
+		}
+		return false;
+	}
+	
+	private static boolean isSupported4xRuntime (String runtimeId) {
+		for (String id : SUPPORTED_4X_RUNTIMES) {
 			if (id.equals(runtimeId)) return true;
 		}
 		return false;
@@ -114,11 +150,15 @@ public final class KarafMockRuntimeCreationUtil {
 		folder = path.append("etc");
 		folder.toFile().mkdirs();
 		
-		folder = path.append("lib");
+		folder = path.append("lib").append("boot");
 		folder.toFile().mkdirs();
 		
 		folder = path.append("system");
 		folder.toFile().mkdirs();
+	}
+	
+	protected static String getMajorMinor(String runtimeId) {
+		return String.format("%s.%s", runtimeId.charAt(runtimeId.length()-2), runtimeId.charAt(runtimeId.length()-1));
 	}
 	
 	private static void copyKarafJarToSkeleton(String runtimeId, IPath runtimePath) throws CoreException {
@@ -133,6 +173,10 @@ public final class KarafMockRuntimeCreationUtil {
 			fileName = "karaf_2.3.jar";
 		} else if (runtimeId.endsWith(".30")) {
 			fileName = "karaf_3.0.jar";
+		} else if (runtimeId.endsWith(".40")) {
+			fileName = "org.apache.karaf.main_4.0.jar";
+		} else if (runtimeId.endsWith(".41")) {
+			fileName = "org.apache.karaf.main_4.1.jar";
 		} else {
 			// 2.x - take any of the above
 			fileName = "karaf_2.3.jar";
@@ -141,6 +185,10 @@ public final class KarafMockRuntimeCreationUtil {
 		File serverJarLoc = BundleUtils.getFileLocation(
 				"org.fusesource.ide.server.tests",
 				"mockData" + File.separator + fileName);
-		FileUtil.fileSafeCopy(serverJarLoc, libFolder.append("karaf.jar").toFile());
+		if (isSupported4xRuntime(runtimeId)) {
+			FileUtil.fileSafeCopy(serverJarLoc, libFolder.append("boot").append(String.format("org.apache.karaf.main-%s.0.jar", getMajorMinor(runtimeId))).toFile());
+		} else {
+			FileUtil.fileSafeCopy(serverJarLoc, libFolder.append("karaf.jar").toFile());			
+		}
 	}
 }
