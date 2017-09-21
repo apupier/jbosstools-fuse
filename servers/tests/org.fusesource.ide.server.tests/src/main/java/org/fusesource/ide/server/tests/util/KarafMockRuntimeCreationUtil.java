@@ -24,24 +24,28 @@ public final class KarafMockRuntimeCreationUtil {
 	
 	public static final String KARAF_22 = "org.fusesource.ide.karaf.runtime.22";
 	public static final String KARAF_23 = "org.fusesource.ide.karaf.runtime.23";
-	public static final String KARAF_2x = "org.fusesource.ide.karaf.runtime.2x";
+	public static final String KARAF_2X = "org.fusesource.ide.karaf.runtime.2x";
 	public static final String KARAF_30 = "org.fusesource.ide.karaf.runtime.30";
-	public static final String KARAF_3x = "org.fusesource.ide.karaf.runtime.3x";	
+	public static final String KARAF_3X = "org.fusesource.ide.karaf.runtime.3x";	
 	public static final String KARAF_40 = "org.fusesource.ide.karaf.runtime.40";
 	public static final String KARAF_41 = "org.fusesource.ide.karaf.runtime.41";
-	public static final String KARAF_4x = "org.fusesource.ide.karaf.runtime.4x";
+	public static final String KARAF_4X = "org.fusesource.ide.karaf.runtime.4x";
 	
-	public static final String[] SUPPORTED_2X_RUNTIMES = new String[] {
+	protected static final String[] SUPPORTED_2X_RUNTIMES = new String[] {
 		KARAF_22, KARAF_23
 	};
 	
-	public static final String[] SUPPORTED_3X_RUNTIMES = new String[] {
+	protected static final String[] SUPPORTED_3X_RUNTIMES = new String[] {
 		KARAF_30 
 	};
 	
-	public static final String[] SUPPORTED_4X_RUNTIMES = new String[] {
+	protected static final String[] SUPPORTED_4X_RUNTIMES = new String[] {
 		KARAF_40, KARAF_41
 	};
+	
+	private KarafMockRuntimeCreationUtil() {
+		// util class
+	}
 	
 	/**
 	 * creates a mock runtime folder structure 
