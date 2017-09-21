@@ -31,15 +31,15 @@ public final class KarafMockRuntimeCreationUtil {
 	public static final String KARAF_41 = "org.fusesource.ide.karaf.runtime.41";
 	public static final String KARAF_4X = "org.fusesource.ide.karaf.runtime.4x";
 	
-	protected static final String[] SUPPORTED_2X_RUNTIMES = new String[] {
+	public static final String[] SUPPORTED_2X_RUNTIMES = new String[] {
 		KARAF_22, KARAF_23
 	};
 	
-	protected static final String[] SUPPORTED_3X_RUNTIMES = new String[] {
+	public static final String[] SUPPORTED_3X_RUNTIMES = new String[] {
 		KARAF_30 
 	};
 	
-	protected static final String[] SUPPORTED_4X_RUNTIMES = new String[] {
+	public static final String[] SUPPORTED_4X_RUNTIMES = new String[] {
 		KARAF_40, KARAF_41
 	};
 	
