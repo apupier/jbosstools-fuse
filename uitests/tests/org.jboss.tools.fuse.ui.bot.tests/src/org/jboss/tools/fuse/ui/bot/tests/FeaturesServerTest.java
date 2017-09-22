@@ -89,7 +89,7 @@ public class FeaturesServerTest extends DefaultTest {
 	 */
 	private void downloadRuntime(String name) {
 		WorkbenchPreferenceDialog dialog = new WorkbenchPreferenceDialog();
-		JBossRuntimeDetection page = new JBossRuntimeDetection();
+		JBossRuntimeDetection page = new JBossRuntimeDetection(dialog);
 		dialog.open();
 		dialog.select(page);
 		DownloadRuntimesWizard runtimeWiz = page.downloadRuntime();
