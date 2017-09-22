@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Red Hat, Inc.
+ * Copyright (c) 2017 Red Hat, Inc.
  * Distributed under license by Red Hat, Inc. All rights reserved.
  * This program is made available under the terms of the
  * Eclipse Public License v1.0 which accompanies this distribution,
@@ -9,6 +9,9 @@
  *     Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
 package org.fusesource.ide.server.tests.bean;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,13 +28,11 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import junit.framework.TestCase;
-
 /**
  * @author lhein
  */
 @RunWith(value = Parameterized.class)
-public class KarafServerBean4xIT extends TestCase {
+public class KarafServerBean4xIT {
 
 	protected static final HashMap<String, String> TYPE_TO_VERSION;
 	static {
@@ -68,15 +69,12 @@ public class KarafServerBean4xIT extends TestCase {
 	 */
 	@Test
 	public void testKaraf() {
-		IPath dest = FuseServerTestActivator.getDefault().getStateLocation()
-				.append(this.fRuntimeType);
+		IPath dest = FuseServerTestActivator.getDefault().getStateLocation().append(this.fRuntimeType);
 		KarafMockRuntimeCreationUtil.create4xRuntimeMock(this.fRuntimeType, dest);
 		ServerBeanLoader l = new ServerBeanLoader(dest.toFile());
 		ServerBean b = l.getServerBean();
 		assertTrue(b.getBeanType() == KarafBeanProvider.KARAF_4x);
 		assertEquals(b.getFullVersion(), TYPE_TO_VERSION.get(this.fRuntimeType));
-		assertEquals(b.getVersion(),
-				ServerBeanLoader.getMajorMinorVersion(TYPE_TO_VERSION
-						.get(this.fRuntimeType)));
+		assertEquals(b.getVersion(), ServerBeanLoader.getMajorMinorVersion(TYPE_TO_VERSION.get(this.fRuntimeType)));
 	}
 }
