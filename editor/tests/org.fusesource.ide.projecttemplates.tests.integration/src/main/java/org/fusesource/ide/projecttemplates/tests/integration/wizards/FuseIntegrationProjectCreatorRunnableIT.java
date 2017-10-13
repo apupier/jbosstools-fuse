@@ -12,15 +12,8 @@ package org.fusesource.ide.projecttemplates.tests.integration.wizards;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -61,6 +54,7 @@ import org.fusesource.ide.camel.editor.utils.BuildAndRefreshJobWaiterUtil;
 import org.fusesource.ide.camel.editor.utils.JobWaiterUtil;
 import org.fusesource.ide.camel.model.service.core.util.CamelCatalogUtils;
 import org.fusesource.ide.camel.tests.util.CommonTestUtils;
+import org.fusesource.ide.camel.tests.util.MarkerUtil;
 import org.fusesource.ide.foundation.ui.util.ScreenshotUtil;
 import org.fusesource.ide.launcher.debug.model.CamelDebugFacade;
 import org.fusesource.ide.launcher.debug.model.CamelDebugTarget;
@@ -194,7 +188,7 @@ public abstract class FuseIntegrationProjectCreatorRunnableIT {
 		waitJob();
 		checkCorrectNatureEnabled(project);
 		waitForValidationThreads();
-		checkNoValidationError();
+		new MarkerUtil().checkNoValidationError(project);
 		checkNoValidationWarning();
 		additionalChecks(project);
 		
@@ -251,23 +245,8 @@ public abstract class FuseIntegrationProjectCreatorRunnableIT {
 		jobWaiterUtil.waitJob(new NullProgressMonitor());
 	}
 
-	private void checkNoValidationError() throws CoreException {
-		checkNoValidationIssueOfType(filterError());
-	}
-	
-	private Predicate<IMarker> filterError(){
-		return marker -> {
-			try {
-				Object severity = marker.getAttribute(IMarker.SEVERITY);
-				return severity == null || severity.equals(IMarker.SEVERITY_ERROR);
-			} catch (CoreException e1) {
-				return true;
-			}
-		};
-	}
-	
 	private void checkNoValidationWarning() throws CoreException {
-		checkNoValidationIssueOfType(filterWarning());
+		new MarkerUtil().checkNoValidationIssueOfType(project, filterWarning());
 	}
 	
 	private Predicate<IMarker> filterWarning(){
@@ -287,47 +266,7 @@ public abstract class FuseIntegrationProjectCreatorRunnableIT {
 		};
 	}
 
-	private void checkNoValidationIssueOfType(Predicate<IMarker> filter) throws CoreException {
-		final IMarker[] markers = project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
-		final List<Object> readableMarkers = Arrays.asList(markers).stream()
-				.filter(filter)
-				.map(marker -> {
-						try {
-							return extractMarkerInformation(marker);
-						} catch (Exception e) {
-							ProjectTemplatesIntegrationTestsActivator.pluginLog().logError(e);
-							try {
-								return "type: "+marker.getType()+"\n"+
-										"attributes:\n"+
-										marker.getAttributes().entrySet().stream()
-							            .map(entry -> entry.getKey() + " - " + entry.getValue())
-							            .collect(Collectors.joining(", "));
-							} catch (CoreException e1) {
-								ProjectTemplatesIntegrationTestsActivator.pluginLog().logError(e1);
-								return marker;
-							}
-						}
-					})
-				.collect(Collectors.toList());
-		assertThat(readableMarkers).isEmpty();
-	}
-
-	private Object extractMarkerInformation(IMarker marker) throws CoreException, IOException {
-		Map<String, Object> markerInformations = marker.getAttributes() != null ? marker.getAttributes() : new HashMap<>();
-		IResource resource = marker.getResource();
-		if(resource != null){
-			markerInformations.put("resource affected", resource.getLocation().toOSString());
-			if(resource instanceof IFile){
-				InputStream contents = ((IFile) resource).getContents();
-				try (BufferedReader buffer = new BufferedReader(new InputStreamReader(contents))) {
-					markerInformations.put("resource affected content", buffer.lines().collect(Collectors.joining("\n")));
-				}
-			}
-		}
-		markerInformations.put("type: ", marker.getType());
-		markerInformations.put("Creation time: ", marker.getCreationTime());
-		return markerInformations;
-	}
+	
 
 	/**
 	 * @param camelResource
