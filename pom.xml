@@ -67,6 +67,9 @@
 		<slf4j.version>1.7.5</slf4j.version>
 		<sonar.test.inclusions>**/*Test.*,**/test/**/*,**/*IT.*</sonar.test.inclusions>
 		
+		<sonar.jacoco.reportPath>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>${project.build.directory}/jacoco-it.exec</sonar.jacoco.itReportPath>
+		
 		<!-- This property allows to specify Camel version used during test executions (where applicable). It is a comma-separated list. -->
 		<camelVersionsToTestWith />
 	</properties>
@@ -317,8 +320,6 @@
 				<sonar.code.codeCoveragePlugin>jacoco</sonar.code.codeCoveragePlugin>
 				<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 				<!-- points to the target folder of the global parent project -->
-				<sonar.jacoco.reportPath>../../../target/jacoco.exec</sonar.jacoco.reportPath>
-				<sonar.jacoco.itReportPath>../../../target/jacoco-it.exec</sonar.jacoco.itReportPath>
 				<sonar.jacoco.reportPaths>${sonar.jacoco.reportPath},${sonar.jacoco.itReportPath}</sonar.jacoco.reportPaths>
 			</properties>
 			<build>
@@ -336,6 +337,19 @@
 						</configuration>
 						<executions>
 							<execution>
+								<id>default</id>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+								<configuration>
+									<destFile>${sonar.jacoco.reportPath}</destFile>
+									<includes>
+										<include>org.fusesource.ide.*</include>
+										<include>org.jboss.tools.fuse.*</include>
+									</includes>
+								</configuration>
+							</execution>
+<!-- 							<execution>
 								<id>agent-for-ut</id>
 								<goals>
 									<goal>prepare-agent</goal>
@@ -343,7 +357,7 @@
 								<configuration>
 									<destFile>${sonar.jacoco.reportPath}</destFile>
 								</configuration>
-							</execution>
+							</execution> -->
 							<execution>
 								<id>agent-for-it</id>
 								<goals>

@@ -13,4 +13,9 @@
   <artifactId>org.fusesource.ide.imports</artifactId>
   <packaging>eclipse-plugin</packaging>
   <name>JBoss Fuse Tooling :: Core :: Plugins :: Imports</name>
+  
+  <properties>
+		<sonar.jacoco.reportPath>../../../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>../../../target/jacoco-it.exec</sonar.jacoco.itReportPath>
+	</properties> 
 </project>

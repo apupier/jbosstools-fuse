@@ -14,5 +14,10 @@
   <artifactId>org.fusesource.ide.jmx.commons</artifactId>
   <packaging>eclipse-plugin</packaging>
   <name>JBoss Fuse Tooling :: JMX :: Plugins :: JMX Commons</name>
+  
+  <properties>
+		<sonar.jacoco.reportPath>../../../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>../../../target/jacoco-it.exec</sonar.jacoco.itReportPath>
+	</properties>
 
 </project>

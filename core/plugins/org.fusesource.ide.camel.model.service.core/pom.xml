@@ -17,6 +17,8 @@
   
   <properties>
   		<bundle.xerces.version>2.11.0</bundle.xerces.version>
+		<sonar.jacoco.reportPath>../../../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>../../../target/jacoco-it.exec</sonar.jacoco.itReportPath>
   </properties>
   
   <build>

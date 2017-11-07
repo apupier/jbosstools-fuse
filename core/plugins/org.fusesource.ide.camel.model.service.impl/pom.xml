@@ -20,6 +20,8 @@
   		<bundle.slf4j.version>1.7.21</bundle.slf4j.version>
   		<groovy-version>2.4.10</groovy-version>
   		<ivy-version>2.4.0</ivy-version>
+		<sonar.jacoco.reportPath>../../../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>../../../target/jacoco-it.exec</sonar.jacoco.itReportPath>
   </properties>
   <build>
 		<plugins>

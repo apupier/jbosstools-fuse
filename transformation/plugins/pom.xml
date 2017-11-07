@@ -15,4 +15,9 @@
         <module>org.jboss.tools.fuse.transformation.core</module>
         <module>org.jboss.tools.fuse.transformation.editor</module>
     </modules>
+    
+    <properties>
+		<sonar.jacoco.reportPath>../../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>../../target/jacoco-it.exec</sonar.jacoco.itReportPath>
+	</properties>
 </project>

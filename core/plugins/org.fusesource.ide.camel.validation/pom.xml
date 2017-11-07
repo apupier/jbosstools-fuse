@@ -14,5 +14,9 @@
   <artifactId>org.fusesource.ide.camel.validation</artifactId>
   <packaging>eclipse-plugin</packaging>
   <name>JBoss Fuse Tooling :: Core :: Plugins :: Camel Validation</name>
- 
+
+	<properties>
+		<sonar.jacoco.reportPath>../../../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>../../../target/jacoco-it.exec</sonar.jacoco.itReportPath>
+	</properties> 
 </project>

@@ -14,4 +14,9 @@
 	<artifactId>org.fusesource.ide.server.karaf.core.tests</artifactId>
 	<packaging>eclipse-plugin</packaging>
 	<name>JBoss Fuse Tooling :: Server Adapters :: Tests :: Karaf Core Tests</name>
+	
+	<properties>
+		<sonar.jacoco.reportPath>../../../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>../../../target/jacoco-it.exec</sonar.jacoco.itReportPath>
+	</properties>
 </project>

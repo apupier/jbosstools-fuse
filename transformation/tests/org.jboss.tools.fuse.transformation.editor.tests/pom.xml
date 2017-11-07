@@ -13,4 +13,9 @@
   <packaging>eclipse-plugin</packaging>
   <name>JBoss Fuse Tooling :: Editor Transformation :: Tests :: Editor Transformation Tests</name>
   <artifactId>org.jboss.tools.fuse.transformation.editor.tests</artifactId>
+  
+  <properties>
+		<sonar.jacoco.reportPath>../../../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>../../../target/jacoco-it.exec</sonar.jacoco.itReportPath>
+	</properties>
 </project>

@@ -32,5 +32,10 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
           </plugin>
       </plugins>
   </build>
+  
+  <properties>
+		<sonar.jacoco.reportPath>../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>../target/jacoco-it.exec</sonar.jacoco.itReportPath>
+	</properties>
 
 </project>

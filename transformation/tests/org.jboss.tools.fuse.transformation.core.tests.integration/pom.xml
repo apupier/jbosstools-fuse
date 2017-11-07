@@ -13,4 +13,9 @@
   <artifactId>org.jboss.tools.fuse.transformation.core.tests.integration</artifactId>
   <packaging>eclipse-test-plugin</packaging>
   <name>JBoss Fuse Tooling :: Core Transformation :: Tests :: Core Transformation Integration Tests</name>
+  
+  <properties>
+		<sonar.jacoco.reportPath>../../../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>../../../target/jacoco-it.exec</sonar.jacoco.itReportPath>
+	</properties>
 </project>

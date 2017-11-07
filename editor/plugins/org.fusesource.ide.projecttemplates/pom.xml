@@ -18,6 +18,9 @@
 	<properties>
 		<!-- Set to false to regenerate locally the template zips -->
 		<skip.assembly>true</skip.assembly>
+		
+		<sonar.jacoco.reportPath>../../../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>../../../target/jacoco-it.exec</sonar.jacoco.itReportPath>
 	</properties>
 
 	<build>

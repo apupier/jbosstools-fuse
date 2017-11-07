@@ -60,5 +60,10 @@
 				</configuration>
 			</plugin>
 		</plugins>
-	</build>  
+	</build>
+	
+	<properties>
+		<sonar.jacoco.reportPath>../../../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>../../../target/jacoco-it.exec</sonar.jacoco.itReportPath>
+	</properties>
 </project>

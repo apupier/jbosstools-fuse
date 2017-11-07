@@ -13,4 +13,9 @@
   <artifactId>org.fusesource.ide.server.karaf.ui</artifactId>
   <packaging>eclipse-plugin</packaging>
   <name>JBoss Fuse Tooling :: Server Adapters :: Plugins :: Apache Karaf Adapter UI</name>
+  
+  <properties>
+		<sonar.jacoco.reportPath>../../../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>../../../target/jacoco-it.exec</sonar.jacoco.itReportPath>
+	</properties>
 </project>

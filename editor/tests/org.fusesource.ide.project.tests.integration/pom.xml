@@ -13,4 +13,9 @@
   <artifactId>org.fusesource.ide.project.tests.integration</artifactId>
   <packaging>eclipse-test-plugin</packaging>
   <name>JBoss Fuse Tooling :: Camel Editor :: Tests :: Camel IDE Project Integration Tests</name>
+  
+  <properties>
+		<sonar.jacoco.reportPath>../../../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>../../../target/jacoco-it.exec</sonar.jacoco.itReportPath>
+	</properties>
 </project>
