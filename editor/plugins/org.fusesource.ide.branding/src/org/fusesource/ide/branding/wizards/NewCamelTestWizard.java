@@ -58,8 +58,6 @@ public class NewCamelTestWizard extends JUnitWizard {
 	
 	private NewCamelTestWizardPageOne fPage1;
 
-	private NewCamelTestWizardPageTwo fPage2;
-
 	public NewCamelTestWizard() {
 		super();
 		setWindowTitle(WizardMessages.Wizard_title_new_testcase);
@@ -75,7 +73,7 @@ public class NewCamelTestWizard extends JUnitWizard {
 	public void addPages() {
 		super.addPages();
 
-		fPage2 = new NewCamelTestWizardPageTwo();
+		NewCamelTestWizardPageTwo fPage2 = new NewCamelTestWizardPageTwo();
 		fPage1 = new NewCamelTestWizardPageOne(this, fPage2);
 		addPage(fPage1);
 		addPage(fPage2);
