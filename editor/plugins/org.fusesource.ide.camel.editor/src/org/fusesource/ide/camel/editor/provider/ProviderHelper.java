@@ -78,6 +78,7 @@ public class ProviderHelper {
 		categoryMap.put("route",CATEGORY_ROUTING);
 		categoryMap.put("routingSlip", CATEGORY_ROUTING);
 		categoryMap.put("sample", CATEGORY_MISC);
+		categoryMap.put("serviceCall", CATEGORY_ROUTING);
 		categoryMap.put("setBody", CATEGORY_TRANSFORMATION);
 		categoryMap.put("setExchangePattern", CATEGORY_TRANSFORMATION);
 		categoryMap.put("setFaultBody", CATEGORY_TRANSFORMATION);
