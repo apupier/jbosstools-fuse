@@ -15,9 +15,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-
 import org.eclipse.reddeer.common.exception.RedDeerException;
 import org.eclipse.reddeer.common.logging.Logger;
+import org.eclipse.reddeer.common.wait.AbstractWait;
+import org.eclipse.reddeer.common.wait.TimePeriod;
 import org.eclipse.reddeer.eclipse.ui.perspectives.JavaEEPerspective;
 import org.eclipse.reddeer.eclipse.ui.views.log.LogView;
 import org.eclipse.reddeer.gef.view.PaletteView;
@@ -38,6 +39,7 @@ import org.jboss.tools.fuse.reddeer.component.Log;
 import org.jboss.tools.fuse.reddeer.component.Otherwise;
 import org.jboss.tools.fuse.reddeer.condition.IssueIsClosed;
 import org.jboss.tools.fuse.reddeer.condition.IssueIsClosed.Jira;
+import org.jboss.tools.fuse.reddeer.editor.CamelComponentEditPart;
 import org.jboss.tools.fuse.reddeer.editor.CamelEditor;
 import org.jboss.tools.fuse.reddeer.editor.SourceEditor;
 import org.jboss.tools.fuse.reddeer.projectexplorer.CamelProject;
@@ -261,6 +263,38 @@ public class CamelEditorTest extends DefaultTest {
 		editor.setProperty("file:directoryName", "Uri", "file:target/messages/others");
 		CamelEditor.switchTab("Source");
 		assertTrue(EditorManipulator.isEditorContentEqualsFile("resources/camel-context-all.xml"));
+		assertTrue(LogGrapper.getPluginErrors("fuse").size() == 0);
+	}
+	
+	/**
+	 * <p>
+	 * Test checks collapse/expand feature of Camel editor components
+	 * </p>
+	 * <ol>
+	 * <li>create a new project from template 'Content Based Router'</li>
+	 * <li>open camel-context.xml file</li>
+	 * <li>Invoke 'Collapse' on route component 'Choice'</li>
+	 * <li>Check if component was collapsed (check if changed size of collapsed component area and height is smaller
+	 * then begin values)</li>
+	 * <li>Check fuse errors in Error Log View</li>
+	 * <li>Invoke 'Expand' on route component 'Choice'</li>
+	 * <li>Check if component was expanded (check changed size of expanded component area -> should be same as area size
+	 * and height before collapse)</li>
+	 * <li>Check fuse errors in Error Log View</li>
+	 * </ol>
+	 */
+	@Test
+	public void testCollapseExpandFeature() {
+		CamelEditor editor = new CamelEditor("camel-context.xml");
+		CamelComponentEditPart editPart = new CamelComponentEditPart("Choice");
+		int startHeight = editPart.getBounds().height;
+		editor.doOperation("Choice", "Collapse");
+		AbstractWait.sleep(TimePeriod.MEDIUM);
+		assertTrue("Route component 'Choice' wasn't collapsed properly", editPart.getBounds().height < startHeight);
+		assertTrue(LogGrapper.getPluginErrors("fuse").size() == 0);
+		editor.doOperation("Choice", "Expand");
+		AbstractWait.sleep(TimePeriod.MEDIUM);
+		assertEquals(editPart.getBounds().height, startHeight);
 		assertTrue(LogGrapper.getPluginErrors("fuse").size() == 0);
 	}
 }
