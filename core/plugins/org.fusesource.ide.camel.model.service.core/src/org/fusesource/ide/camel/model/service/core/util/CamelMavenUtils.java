@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -123,6 +124,9 @@ public class CamelMavenUtils {
 					camelVersion = CamelCatalogUtils.getLatestCamelVersion();
 				} else {
 					camelVersion = getCamelVersionFromDependencies(deps);
+					if (camelVersion == null) {
+						camelVersion = getCamelVersionFromProperty(project);
+					}
 				}				
 				project.setSessionProperty(CAMEL_VERSION_QNAME, camelVersion);
 			} else {
@@ -133,6 +137,19 @@ public class CamelMavenUtils {
 			camelVersion = CamelCatalogUtils.getLatestCamelVersion();
 		}
 		return camelVersion;
+	}
+
+	private String getCamelVersionFromProperty(IProject project) {
+		IMavenProjectFacade m2facade = getMavenProjectFacade(project);
+		MavenProject m2Project;
+		try {
+			m2Project = m2facade.getMavenProject(new NullProgressMonitor());
+			Properties mavenProperties = m2Project.getProperties();
+			return mavenProperties.getProperty("camel.version");
+		} catch (CoreException e) {
+			CamelModelServiceCoreActivator.pluginLog().logError(e);
+		}
+		return null;
 	}
 
 	public Model getMavenModel(IProject project) {

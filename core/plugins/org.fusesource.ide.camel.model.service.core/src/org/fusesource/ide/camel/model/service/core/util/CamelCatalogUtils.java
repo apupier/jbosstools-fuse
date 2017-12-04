@@ -242,10 +242,11 @@ public class CamelCatalogUtils {
 	 * tries to map a FUSE BOM version to the Camel version
 	 * 
 	 * @param camelVersion
+	 * @param monitor 
 	 * @param mavenModel 
 	 * @return
 	 */
-	public static String getFuseVersionForCamelVersion(String camelVersion, IProject project) {
+	public static String getFuseVersionForCamelVersion(String camelVersion, IProject project, IProgressMonitor monitor) {
 		String bomVersion = CAMEL_VERSION_2_FUSE_6_BOM_MAPPING.get(camelVersion);
 		// seems it's not a Fuse Camel version
 		// TODO: revisit once https://issues.apache.org/jira/browse/CAMEL-8502 got solved
@@ -257,35 +258,12 @@ public class CamelCatalogUtils {
 				if(CAMEL_VERSION_2_FUSE_7_BOM_MAPPING.containsKey(camelVersion)) {
 					bomVersion = CAMEL_VERSION_2_FUSE_7_BOM_MAPPING.get(camelVersion);
 				} else {
-					bomVersion = findLatestBomVersionOnAvailableRepo(project);
+					bomVersion = new OnlineBomVersionSearcher().findLatestBomVersionOnAvailableRepo(project, monitor);
 				}
 			}
 		}
 		return bomVersion;
 	}
-
-	protected static String findLatestBomVersionOnAvailableRepo(IProject project) {
-		String bomVersion = null;
-		try {
-			//search with m2e Index, it goes faster in case m2e indexing is activated
-			IIndex index = MavenPlugin.getIndexManager().getIndex(project);
-			IndexSearchEngine indexSearchEngine = new IndexSearchEngine(index);
-			Collection<String> versions = indexSearchEngine.findVersions("org.jboss.fuse", "jboss-fuse-parent", null, Packaging.POM);
-			if(!versions.isEmpty()) {
-				bomVersion = versions.iterator().next();
-			} else {
-				//search with Aether APi
-				IMavenProjectFacade mavenProjectFacade = new CamelMavenUtils().getMavenProjectFacade(project);
-				MavenProject mavenProject = mavenProjectFacade.getMavenProject(new NullProgressMonitor());
-				bomVersion = MavenPlugin.getMaven().createExecutionContext().execute(mavenProject, new SearchLatestBomVersionAvailable(mavenProject), new NullProgressMonitor());
-			}
-		} catch (CoreException e) {
-			CamelModelServiceCoreActivator.pluginLog().logError(e);
-		}
-		return bomVersion;
-	}
-	
-
 
 	/**
 	 * checks if the given camel version is a pure fis version
