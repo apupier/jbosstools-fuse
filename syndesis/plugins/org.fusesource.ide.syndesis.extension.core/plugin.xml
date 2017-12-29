@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension
+         point="org.eclipse.wst.json.core.schemaCatalogContributions">
+      <schemaCatalogContribution>
+         <schema
+               fileMatch="syndesis-extension-definition.json"
+               name="Syndesis Technical Extension Schema"
+               uri="schemas/syndesis-extension-definition-schema.json">
+         </schema>
+      </schemaCatalogContribution>
+   </extension>
 </plugin>
