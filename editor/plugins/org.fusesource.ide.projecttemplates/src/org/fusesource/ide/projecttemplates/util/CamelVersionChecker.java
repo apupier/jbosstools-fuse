@@ -43,21 +43,26 @@ public class CamelVersionChecker implements IRunnableWithProgress {
 			// wait
 			Thread.sleep(100);
 		}
+		if(thread.isAlive()) {
+			thread.interrupt();
+		}
 		done = true;
 	}
 
 	public void cancel() {
-		this.thread.interrupt();
+		thread.interrupt();
 		monitor.setCanceled(true);
 	}
 
 	private Thread createThread() {
-		return new Thread( () -> {
-			valid = isCamelVersionValid(camelVersionToValidate);
-			if (!monitor.isCanceled()) {
-				monitor.done();
-			}
-		});
+		return new Thread(null,
+				() -> {
+					valid = isCamelVersionValid(camelVersionToValidate);
+					if (!monitor.isCanceled()) {
+						monitor.done();
+					}
+				},
+				"Camel Version Checker - " + CamelVersionChecker.this.toString());
 	}
 
 	public boolean isDone() {
