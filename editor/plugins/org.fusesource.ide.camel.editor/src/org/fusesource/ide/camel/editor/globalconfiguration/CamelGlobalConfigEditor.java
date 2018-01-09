@@ -63,6 +63,7 @@ import org.fusesource.ide.camel.editor.dialogs.provider.GlobalConfigElementsDial
 import org.fusesource.ide.camel.editor.dialogs.provider.GlobalConfigElementsDialogLabelProvider;
 import org.fusesource.ide.camel.editor.internal.CamelEditorUIActivator;
 import org.fusesource.ide.camel.editor.internal.UIMessages;
+import org.fusesource.ide.camel.editor.provider.ext.GlobalConfigElementType;
 import org.fusesource.ide.camel.editor.provider.ext.GlobalConfigurationTypeWizard;
 import org.fusesource.ide.camel.editor.provider.ext.ICustomGlobalConfigElementContribution;
 import org.fusesource.ide.camel.editor.utils.MavenUtils;
@@ -770,8 +771,12 @@ public class CamelGlobalConfigEditor extends EditorPart implements ICamelModelLi
 							throw new UnsupportedOperationException();
 							// here we need to reinit the model element so it
 							// copies all information from the node
-						case CONTEXT_ENDPOINT:		throw new UnsupportedOperationException();
+						case CONTEXT_ENDPOINT:
+							throw new UnsupportedOperationException();
 						case GLOBAL_ELEMENT:
+							modifyGlobalElement(newXMLNode);
+							break;
+						case GLOBAL_BEAN:
 							modifyGlobalElement(newXMLNode);
 							break;
 						default:					// nothing to do - handled via node events
