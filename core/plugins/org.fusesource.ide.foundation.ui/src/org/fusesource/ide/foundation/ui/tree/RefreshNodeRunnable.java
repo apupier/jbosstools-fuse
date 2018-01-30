@@ -10,11 +10,16 @@
  ******************************************************************************/ 
 package org.fusesource.ide.foundation.ui.tree;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
-import org.jboss.tools.jmx.ui.internal.views.navigator.JMXNavigator;
 
 /**
  * @author Aurelien Pupier
@@ -33,21 +38,26 @@ public final class RefreshNodeRunnable implements Runnable {
 
 	@Override
 	public void run() {
-		JMXNavigator jmxView = getJMXNavigatorView();
-		if (jmxView != null) {
-			CommonViewer commonViewer = (CommonViewer) jmxView.getAdapter(CommonViewer.class);
-			commonViewer.update(this.nodeSupport, null);
+		for (CommonViewer commonViewer : findCommonViewers()) {
+			commonViewer.update(nodeSupport, null);
 		}
 	}
-
-	private JMXNavigator getJMXNavigatorView() {
+	
+	private Set<CommonViewer> findCommonViewers() {
+		Set<CommonViewer> res = new HashSet<>();
 		final IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (activeWorkbenchWindow != null) {
 			final IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
-			if (activePage != null) {
-				return (JMXNavigator) activePage.findView(JMXNavigator.VIEW_ID);
+			for (IViewReference viewRef : activePage.getViewReferences()) {
+				IWorkbenchPart viewPart = viewRef.getPart(false);
+				if (viewPart instanceof IAdaptable) {
+					CommonViewer commonViewer = viewPart.getAdapter(CommonViewer.class);
+					if (commonViewer != null) {
+						res.add(commonViewer);
+					}
+				}
 			}
 		}
-		return null;
+		return res;
 	}
 }
