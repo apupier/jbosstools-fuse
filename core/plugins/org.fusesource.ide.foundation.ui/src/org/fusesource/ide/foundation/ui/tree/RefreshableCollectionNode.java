@@ -60,7 +60,7 @@ public abstract class RefreshableCollectionNode extends RefreshableNode implemen
 	}
 
 	public List<IPropertySource> getPropertySourceList() {
-		List<IPropertySource> list = new ArrayList<IPropertySource>();
+		List<IPropertySource> list = new ArrayList<>();
 		List<Node> children = getChildrenList();
 		for (Node node : children) {
 			IPropertySource propertySource = null;

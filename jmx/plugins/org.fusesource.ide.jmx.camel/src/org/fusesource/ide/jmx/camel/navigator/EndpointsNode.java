@@ -121,24 +121,17 @@ public class EndpointsNode extends RefreshableCollectionNode implements ImagePro
 				CamelContextMBean mbean = getCamelContextNode().getCamelContextMBean();
 				mbean.createEndpoint(uri);
 				
-				Display.getDefault().syncExec(new Runnable() {
-					@Override
-					public void run() {
-						refresh();
-					}
-				});
+				Display.getDefault().syncExec(this::refresh);
 			} catch (Exception e) {
 				CamelJMXPlugin.showUserError("Failed to create Endpoint", "Failed to create endpoint: " + uri, e);
 			}
 		}
 	}
 
-
 	@Override
 	protected void loadChildren() {
 		try {
-			List<CamelEndpointMBean> endpoints = camelContextNode.getFacade()
-					.getEndpoints(camelContextNode.getManagementName());
+			List<CamelEndpointMBean> endpoints = camelContextNode.getFacade().getEndpoints(camelContextNode.getManagementName());
 			for (CamelEndpointMBean endpointMBean : endpoints) {
 				String uri = endpointMBean.getEndpointUri();
 				String scheme = URIs.getScheme(uri);
@@ -147,12 +140,9 @@ public class EndpointsNode extends RefreshableCollectionNode implements ImagePro
 				schemeEndpoint.addChild(endpoint);
 			}
 		} catch (Exception e) {
-			CamelJMXPlugin.getLogger().warning("Failed to load endpoints for "
-					+ camelContextNode + ". " + e, e);
+			CamelJMXPlugin.getLogger().warning("Failed to load endpoints for " + camelContextNode + ". " + e, e);
 		}
 	}
-
-	
 
 	protected EndpointSchemeNode getEndpointScheme(String scheme) {
 		EndpointSchemeNode answer = schemeNodes.get(scheme);
@@ -164,18 +154,11 @@ public class EndpointsNode extends RefreshableCollectionNode implements ImagePro
 		return answer;
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof EndpointsNode && obj.hashCode() == hashCode();
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(getConnection(), schemeNodes);
