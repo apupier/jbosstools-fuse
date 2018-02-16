@@ -25,7 +25,6 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
-import org.apache.maven.artifact.versioning.ComparableVersion;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -111,7 +110,7 @@ public abstract class FuseIntegrationProjectCreatorRunnableIT extends AbstractPr
 		assertThat(project.exists()).describedAs("The project "+ project.getName()+ " doesn't exist.").isTrue();
 		ProjectTemplatesIntegrationTestsActivator.pluginLog().logInfo("Project created: "+projectName);
 		final IFile camelResource = project.getFile(camelFilePath);
-		assertThat(camelResource.exists()).isTrue();
+		assertThat(camelResource.exists()).as("The file " + camelResource.getLocation().toOSString() + " does not exist.").isTrue();
 
 		// TODO: wait for all build job to finish?
 		waitJob();

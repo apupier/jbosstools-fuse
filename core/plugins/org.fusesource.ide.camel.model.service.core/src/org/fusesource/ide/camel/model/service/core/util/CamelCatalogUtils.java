@@ -35,6 +35,7 @@ import org.fusesource.ide.camel.model.service.core.util.versionmapper.CamelForFu
 import org.fusesource.ide.camel.model.service.core.util.versionmapper.CamelForFuse7ToBomMapper;
 import org.fusesource.ide.camel.model.service.core.util.versionmapper.CamelForWildflyFuse7ToBomMapper;
 import org.fusesource.ide.camel.model.service.core.util.versionmapper.FISBomToFabric8MavenPluginMapper;
+import org.fusesource.ide.camel.model.service.core.util.versionmapper.FISBomToKarafMavenPluginMapper;
 import org.fusesource.ide.foundation.core.util.Strings;
 import org.fusesource.ide.foundation.core.util.VersionUtil;
 
@@ -84,6 +85,7 @@ public class CamelCatalogUtils {
 	static final Map<String, String> CAMEL_VERSION_2_FUSE_7_BOM_MAPPING = new CamelForFuse7ToBomMapper().getMapping();
 	static final Map<String, String> CAMEL_VERSION_2_FUSE_7_WILDFLY_BOM_MAPPING = new CamelForWildflyFuse7ToBomMapper().getMapping();
 	static final Map<String, String> FISBOM_TO_FABRIC8MAVENPLUGIN_MAPPING = new FISBomToFabric8MavenPluginMapper().getMapping();
+	static final Map<String, String> FISBOM_TO_KARAFMAVENPLUGIN_MAPPING = new FISBomToKarafMavenPluginMapper().getMapping();
 	
 	static {
 		OFFICIAL_SUPPORTED_CAMEL_CATALOG_VERSIONS.addAll(CAMEL_VERSION_2_FUSE_6_BOM_MAPPING.keySet());
@@ -377,12 +379,20 @@ public class CamelCatalogUtils {
 	}
 
 	public static String getFabric8MavenPluginVersionForBomVersion(String bomVersion, IProgressMonitor monitor) {
-		if(FISBOM_TO_FABRIC8MAVENPLUGIN_MAPPING.containsKey(bomVersion)) {
-			return FISBOM_TO_FABRIC8MAVENPLUGIN_MAPPING.get(bomVersion);
+		return getMavenPluginVersionForBomVersion(FISBOM_TO_FABRIC8MAVENPLUGIN_MAPPING, bomVersion, "io.fabric8", "fabric8-maven-plugin", monitor);
+	}
+
+	public static String getKarafMavenPluginVersionForBomVersion(String bomVersion, IProgressMonitor monitor) {
+		return getMavenPluginVersionForBomVersion(FISBOM_TO_KARAFMAVENPLUGIN_MAPPING, bomVersion, "org.apache.karaf.tooling", "karaf-maven-plugin", monitor);
+	}
+	
+	private static String getMavenPluginVersionForBomVersion(Map<String, String> mapping, String bomVersion, String mavenPluginGroupId, String mavenPluginArttifactId, IProgressMonitor monitor) {
+		if (mapping.containsKey(bomVersion)) {
+			return mapping.get(bomVersion);
 		} else {
 			org.apache.maven.model.Dependency artifactToSearch = new org.apache.maven.model.Dependency();
-			artifactToSearch.setGroupId("io.fabric8");
-			artifactToSearch.setArtifactId("fabric8-maven-plugin");
+			artifactToSearch.setGroupId(mavenPluginGroupId);
+			artifactToSearch.setArtifactId(mavenPluginArttifactId);
 			try {
 				return new OnlineArtifactVersionSearcher().findLatestVersion(monitor, artifactToSearch);
 			} catch (CoreException e) {
@@ -391,4 +401,5 @@ public class CamelCatalogUtils {
 			}
 		}
 	}
+
 }

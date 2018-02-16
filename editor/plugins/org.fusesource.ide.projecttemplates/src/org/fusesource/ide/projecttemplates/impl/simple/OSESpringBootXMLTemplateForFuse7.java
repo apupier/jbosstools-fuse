@@ -24,7 +24,7 @@ public class OSESpringBootXMLTemplateForFuse7 extends AbstractOSESpringBootXMLTe
 	@Override
 	public TemplateConfiguratorSupport getConfigurator() {
 		String bomVersion = getArtifactLastVersion(FuseBomFilter.BOM_FUSE_FIS.getGroupId(), FuseBomFilter.BOM_FUSE_FIS.getArtifactId());
-		return new MavenConfiguratorForOSESpringBootTemplate(bomVersion);
+		return new MavenConfiguratorForFuseOnOpenShift7Template(bomVersion);
 	}
 
 	@Override

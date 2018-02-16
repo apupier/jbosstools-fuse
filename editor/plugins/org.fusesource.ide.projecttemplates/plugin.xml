@@ -170,6 +170,15 @@
           weight="50">
     </projectTemplate>
     <projectTemplate
+          category="fuse.projecttemplates.ose"
+          class="org.fusesource.ide.projecttemplates.impl.simple.OSEKarafXMLTemplateForFuse7"
+          description="%template.simple.osekaraf.xml.description"
+          id="org.fusesource.ide.projecttemplates.oseKarafv7"
+          keywords="ose openshift karaf"
+          name="%template.simple.osekaraf.xml.name"
+          weight="50">
+    </projectTemplate>
+    <projectTemplate
           category="fuse.projecttemplates.jbossfuse.advanced"
           class="org.fusesource.ide.projecttemplates.impl.medium.CXfCodeFirstProjectTemplateForFuse6"
           description="%template.medium.cxf.code.first.description"

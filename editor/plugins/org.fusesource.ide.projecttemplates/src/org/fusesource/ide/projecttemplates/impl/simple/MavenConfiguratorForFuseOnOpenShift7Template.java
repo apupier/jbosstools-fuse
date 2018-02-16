@@ -21,9 +21,9 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.fusesource.ide.camel.model.service.core.util.CamelCatalogUtils;
 import org.fusesource.ide.projecttemplates.adopters.configurators.MavenTemplateConfigurator;
 
-final class MavenConfiguratorForOSESpringBootTemplate extends MavenTemplateConfigurator {
+class MavenConfiguratorForFuseOnOpenShift7Template extends MavenTemplateConfigurator {
 
-	MavenConfiguratorForOSESpringBootTemplate(String bomVersion) {
+	MavenConfiguratorForFuseOnOpenShift7Template(String bomVersion) {
 		super(bomVersion);
 	}
 
