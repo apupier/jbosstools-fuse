@@ -42,7 +42,7 @@ public class CustomStepAsJavaBeanProjectTemplate extends AbstractProjectTemplate
 	private class SyndesisProjectCreator extends UnzipStreamCreator {
 
 		private static final String TEMPLATE_FOLDER = "templates/";
-		private static final String TEMPLATE_XML = "template-syndesis-ext-xml.zip";
+		private static final String TEMPLATE_XML = "template-custom-step-javabean.zip";
 		
 		@Override
 		public InputStream getTemplateStream(CommonNewProjectMetaData metadata)

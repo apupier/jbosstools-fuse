@@ -42,7 +42,7 @@ public class CustomStepAsCamelRouteProjectTemplate extends AbstractProjectTempla
 	private class SyndesisProjectCreator extends UnzipStreamCreator {
 
 		private static final String TEMPLATE_FOLDER = "templates/";
-		private static final String TEMPLATE_XML = "template-syndesis-ext-xml.zip";
+		private static final String TEMPLATE_XML = "template-custom-step-camelroute.zip";
 		
 		@Override
 		public InputStream getTemplateStream(CommonNewProjectMetaData metadata)

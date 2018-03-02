@@ -42,7 +42,7 @@ public class CustomConnectorProjectTemplate extends AbstractProjectTemplate {
 	private class SyndesisProjectCreator extends UnzipStreamCreator {
 
 		private static final String TEMPLATE_FOLDER = "templates/";
-		private static final String TEMPLATE_XML = "template-syndesis-ext-xml.zip";
+		private static final String TEMPLATE_XML = "template-custom-connector.zip";
 		
 		@Override
 		public InputStream getTemplateStream(CommonNewProjectMetaData metadata)
