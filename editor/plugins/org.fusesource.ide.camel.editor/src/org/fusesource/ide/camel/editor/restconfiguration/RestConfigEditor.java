@@ -32,7 +32,14 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Listener;
+import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -124,7 +131,7 @@ public class RestConfigEditor extends EditorPart implements ICamelModelListener,
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
-
+	
 	private void createTabs(Composite parent) {
 		tabFolder = new CTabFolder(parent, SWT.BORDER | SWT.FLAT | SWT.RIGHT);
 		tabFolder.setSimple(false);
@@ -137,8 +144,36 @@ public class RestConfigEditor extends EditorPart implements ICamelModelListener,
 		operationsTab.setText(UIMessages.RestConfigEditorOperationsTab);
 		
 		setSelectionBackground();
+		
+		tabFolder.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateSelectionSeenFromOutsideOfEditor();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				updateSelectionSeenFromOutsideOfEditor();
+			}
+			
+		});
+		
 	}
 
+	private void updateSelectionSeenFromOutsideOfEditor() {
+		if (configurationTab.equals(tabFolder.getSelection())) {
+			selection = null;
+		} else {
+			if(!restList.getSelection().isEmpty() && selectedControl != null) {
+				selection = getDataFromSelectedUIElement(selectedControl);
+			} else {
+				selection = null;
+			}
+		}
+		setSelection(getSelection());
+	}
+	
 	private void createColors() {
 		colorMap = new HashMap<>();
 		colorMap.put(RestConfigConstants.REST_COLOR_LIGHT_BLUE, new Color(Display.getDefault(), 235, 242, 250));
@@ -198,7 +233,7 @@ public class RestConfigEditor extends EditorPart implements ICamelModelListener,
 	public void setFocus() {
 		// empty
 	}
-
+	
 	private void createContents() {
 		toolkit = new FormToolkit(Display.getDefault());
 
@@ -428,7 +463,8 @@ public class RestConfigEditor extends EditorPart implements ICamelModelListener,
 				clearUI();
 				
 				Element restElement = (Element) event.getStructuredSelection().getFirstElement();
-				setSelection(new StructuredSelection(new CamelBasicModelElement(null, restElement)));
+				selection = new StructuredSelection(new CamelBasicModelElement(null, restElement));
+				updateSelectionSeenFromOutsideOfEditor();
 				
 				if (restElement.getChildNodes().getLength() > 0) {
 					for (int i = 0; i < restElement.getChildNodes().getLength(); i++) {
@@ -613,7 +649,7 @@ public class RestConfigEditor extends EditorPart implements ICamelModelListener,
 	
 	private void refreshRestSection() {
 		clearUI();
-		if (!getModel().get(RestConfigConstants.REST_TAG).isEmpty()) {
+		if (!getModel().get(RestConfigConstants.REST_TAG).isEmpty() && operationsTab.equals(tabFolder.getSelection())) {
 			restList.setInput(getModel().get(RestConfigConstants.REST_TAG));
 			restList.refresh();
 			restList.setSelection(new StructuredSelection(restList.getElementAt(0)), true);
@@ -645,8 +681,9 @@ public class RestConfigEditor extends EditorPart implements ICamelModelListener,
 	public ISelection getSelection() {
 		if (selection != null) {
 			return new StructuredSelection(selection);
+		} else {
+			return StructuredSelection.EMPTY;
 		}
-		return null;
 	}
 
 	@Override
@@ -669,9 +706,7 @@ public class RestConfigEditor extends EditorPart implements ICamelModelListener,
 			updateSelectionDisplay(selectedControl, newControl);
 			selectedControl = newControl;
 			selection = getDataFromSelectedUIElement(newControl);
-			if (selection != null) {
-				setSelection(new StructuredSelection(selection));
-			}
+			updateSelectionSeenFromOutsideOfEditor();
 		}
 
 		private void updateSelectionDisplay(Control oldControl, Control newControl) {
