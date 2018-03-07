@@ -12,7 +12,7 @@ package org.fusesource.ide.camel.editor.restconfiguration;
 
 import org.junit.Test;
 
-public class RestModelBuilderTest {
+public class RestModelBuilderIT {
 
 	@Test
 	public void testBuild() throws Exception {
