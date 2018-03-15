@@ -46,8 +46,6 @@ public class FuseIntegrationProjectWizardTemplatePage extends WizardPage {
 	private Text templateInfoText;
 	private FuseIntegrationProjectWizardRuntimeAndCamelPage runtimeAndCamelVersionPage;
 	private CompatibleCamelVersionFilter compatibleCamelVersionFilter;
-	private Label filteredTemplatesInformationMessage;
-	private Label filteredTemplatesInformationIcon;
 	
 	public FuseIntegrationProjectWizardTemplatePage(FuseIntegrationProjectWizardRuntimeAndCamelPage runtimeAndCamelVersionPage) {
 		super(Messages.newProjectWizardTemplatePageName);
@@ -99,10 +97,10 @@ public class FuseIntegrationProjectWizardTemplatePage extends WizardPage {
 		infoComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
 		infoComposite.setLayout(GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).create());
 		
-		filteredTemplatesInformationIcon = new Label(infoComposite, SWT.NONE);
+		Label filteredTemplatesInformationIcon = new Label(infoComposite, SWT.NONE);
 		filteredTemplatesInformationIcon.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK));
 		
-		filteredTemplatesInformationMessage = new Label(infoComposite, SWT.NONE);
+		Label filteredTemplatesInformationMessage = new Label(infoComposite, SWT.NONE);
 		filteredTemplatesInformationMessage.setText(Messages.newProjectWizardTemplatePageTemplateFilterMessageInformation);
 		filteredTemplatesInformationMessage.setFont(JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT));
 	}
