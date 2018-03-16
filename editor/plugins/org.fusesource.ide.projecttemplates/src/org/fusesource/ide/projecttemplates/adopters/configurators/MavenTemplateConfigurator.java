@@ -54,13 +54,13 @@ public class MavenTemplateConfigurator extends DefaultTemplateConfigurator {
 		try {
 			if (ok) {
 				// by default add staging repos if option enabled
-				ok = MavenUtils.manageStagingRepositories(m2model);
+				MavenUtils.manageStagingRepositories(m2model);
 			}
 			subMonitor.setWorkRemaining(2);
 			
 			if (ok && !Strings.isBlank(metadata.getCamelVersion())) {
 				// by default configure the version of camel used in the pom.xml
-				ok = MavenUtils.configurePomCamelVersion(project, m2model, metadata, metadata.getCamelVersion(), subMonitor.newChild(1));
+				MavenUtils.configurePomCamelVersion(project, m2model, metadata, metadata.getCamelVersion(), subMonitor.newChild(1));
 			}
 			subMonitor.setWorkRemaining(1);
 		} finally {
@@ -77,12 +77,12 @@ public class MavenTemplateConfigurator extends DefaultTemplateConfigurator {
 	 * @return	true on success
 	 */
 	protected boolean configureMavenNature(IProject project, IProgressMonitor monitor) {
-		SubMonitor subMonitor = SubMonitor.convert(monitor,Messages.mavenTemplateConfiguratorConfiguringMavenNatureMonitorMessage, 3);
+		SubMonitor subMonitor = SubMonitor.convert(monitor,Messages.mavenTemplateConfiguratorConfiguringMavenNatureMonitorMessage, 4);
 		try {
 			ResolverConfiguration configuration = new ResolverConfiguration();
 			configuration.setResolveWorkspaceProjects(true);
 			configuration.setSelectedProfiles(""); //$NON-NLS-1$
-			//new BuildAndRefreshJobWaiterUtil().waitJob(subMonitor.newChild(1));
+			new BuildAndRefreshJobWaiterUtil().waitJob(subMonitor.newChild(1));
 			IProjectConfigurationManager configurationManager = MavenPlugin.getProjectConfigurationManager();
 			configurationManager.enableMavenNature(project, configuration, subMonitor.newChild(1));
 			configurationManager.updateProjectConfiguration(project, subMonitor.newChild(1));
