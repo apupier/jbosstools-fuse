@@ -68,7 +68,7 @@ public class CamelBasicModelElementTestIT {
 	}
 
 	@Test
-	public void testDisplayingUserTextIfIdIsPrefered() {
+	public void testDisplayingUserTextIfIdIsPreferred() {
 		PreferenceManager.getInstance().savePreference(EDITOR_PREFER_ID_AS_LABEL, true);
 		PreferenceManager.getInstance().savePreference(EDITOR_PREFERRED_LABEL, "log.message");
 		assertEquals("Log ${body}", simpleLog().getDisplayText());
