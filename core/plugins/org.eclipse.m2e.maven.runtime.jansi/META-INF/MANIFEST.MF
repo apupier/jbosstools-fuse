@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Jansi lib for Maven embedded - workaround Eclipse bug 536402
+Bundle-SymbolicName: org.eclipse.m2e.maven.runtime.jansi
+Bundle-Version: 11.0.0.qualifier
+Fragment-Host: org.eclipse.m2e.maven.runtime;bundle-version="1.9.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Eclipse-BundleShape: dir
+Bundle-ClassPath: jars/jansi-1.17.jar,
+ .
+Bundle-Vendor: Red Hat
