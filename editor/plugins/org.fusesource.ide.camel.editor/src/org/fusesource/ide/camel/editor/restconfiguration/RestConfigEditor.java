@@ -687,7 +687,6 @@ public class RestConfigEditor extends EditorPart implements ICamelModelListener,
 		form.layout(true);
 		toolkit.decorateFormHeading(form.getForm());
 		reselect();
-		setFocus();
 	}
 
 	@Override
