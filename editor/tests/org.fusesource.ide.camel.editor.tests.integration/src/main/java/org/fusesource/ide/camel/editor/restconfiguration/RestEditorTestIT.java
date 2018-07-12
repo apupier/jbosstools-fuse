@@ -13,7 +13,6 @@ package org.fusesource.ide.camel.editor.restconfiguration;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.fusesource.ide.camel.editor.CamelDesignEditor;
 import org.fusesource.ide.camel.editor.CamelEditor;
@@ -274,13 +273,8 @@ public class RestEditorTestIT extends AbstractCamelEditorIT {
 
 		// add a REST Element
 		restEditor.addRestElement();
-		readAndDispatch(20);
-
 		// add a REST Configuration element (without the wizard)
-		Display.getDefault().syncExec(() -> 
-			restEditor.createRestOperation(RestVerbElement.GET_VERB, "test", "myTestID")
-		);
-		readAndDispatch(20);
+		restEditor.createRestOperation(RestVerbElement.GET_VERB, "test", "myTestID");
 
 		// test for new component
 		assertThat(context.getRestElements().isEmpty()).isNotEqualTo(true);
