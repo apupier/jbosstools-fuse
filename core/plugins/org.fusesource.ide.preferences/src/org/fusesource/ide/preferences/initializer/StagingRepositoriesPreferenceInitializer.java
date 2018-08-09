@@ -55,7 +55,9 @@ public class StagingRepositoriesPreferenceInitializer extends AbstractPreference
 				THIRD_PARTY_STAGING_REPO_URI + StagingRepositoriesConstants.REPO_SEPARATOR +
 				PRODUCT_FIS_STAGING_REPO_URI + StagingRepositoriesConstants.REPO_SEPARATOR +
 				ASF_SNAPSHOT_REPO_URI + StagingRepositoriesConstants.REPO_SEPARATOR +
-				PRODUCT_FUSE_NON_PRODUCTIZED_STAGING_REPO_URI);
+				PRODUCT_FUSE_NON_PRODUCTIZED_STAGING_REPO_URI+ StagingRepositoriesConstants.REPO_SEPARATOR +
+				"fuse7.1camel-tmp,https://repository.jboss.org/nexus/content/repositories/fusesource_releases_external-11422/"+ StagingRepositoriesConstants.REPO_SEPARATOR +
+				"fuse7.1bom-tmp,https://repository.jboss.org/nexus/content/repositories/fusesource_releases_external-11438/");
 	}
 
 	IPreferenceStore getPreferenceStore() {

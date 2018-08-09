@@ -54,6 +54,7 @@ import org.fusesource.ide.launcher.debug.model.ThreadGarbageCollector;
 import org.fusesource.ide.launcher.debug.util.ICamelDebugConstants;
 import org.fusesource.ide.launcher.ui.launch.ExecutePomAction;
 import org.fusesource.ide.launcher.ui.launch.ExecutePomActionPostProcessor;
+import org.fusesource.ide.preferences.initializer.StagingRepositoriesPreferenceInitializer;
 import org.fusesource.ide.projecttemplates.adopters.AbstractProjectTemplate;
 import org.fusesource.ide.projecttemplates.adopters.util.CamelDSLType;
 import org.fusesource.ide.projecttemplates.impl.simple.EmptyProjectTemplateForFuse6;
@@ -87,9 +88,9 @@ public abstract class FuseIntegrationProjectCreatorRunnableIT extends AbstractPr
 		ScreenshotUtil.saveScreenshotToFile(String.format("%s/MavenLaunchOutput-%s_BEFORE.png", SCREENSHOT_FOLDER, projectName), SWT.IMAGE_PNG);
 		
 		//No staging repository currently
-//		if("2.18.1.redhat-000012".equals(camelVersion) || "2.17.0.redhat-630224".equals(camelVersion)){
-//			new StagingRepositoriesPreferenceInitializer().setStagingRepositoriesEnablement(true);
-//		}
+		if("2.21.0.fuse-710XXX".equals(camelVersion)){
+			new StagingRepositoriesPreferenceInitializer().setStagingRepositoriesEnablement(true);
+		}
 
 		ProjectTemplatesIntegrationTestsActivator.pluginLog().logInfo("End setup for "+ FuseIntegrationProjectCreatorRunnableIT.class.getSimpleName());
 	}
@@ -286,5 +287,9 @@ public abstract class FuseIntegrationProjectCreatorRunnableIT extends AbstractPr
 
 	protected boolean isOlderThan220() {
 		return new VersionUtil().isStrictlyLowerThan2200(camelVersion);
+	}
+	
+	protected boolean isOlderThan221ForFuse71() {
+		return new VersionUtil().isGreaterThan("2.21.0.fuse-710", camelVersion);
 	}
 }

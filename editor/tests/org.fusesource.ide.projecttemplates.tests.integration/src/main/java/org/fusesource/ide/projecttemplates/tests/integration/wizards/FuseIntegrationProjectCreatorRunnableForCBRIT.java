@@ -12,12 +12,14 @@ package org.fusesource.ide.projecttemplates.tests.integration.wizards;
 
 import static org.junit.Assume.assumeFalse;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.fusesource.ide.camel.model.service.core.util.CamelCatalogUtils;
 import org.fusesource.ide.projecttemplates.adopters.util.CamelDSLType;
 import org.fusesource.ide.projecttemplates.impl.simple.CBRTemplateForFuse6;
 import org.fusesource.ide.projecttemplates.impl.simple.CBRTemplateForFuse7;
+import org.fusesource.ide.projecttemplates.impl.simple.CBRTemplateForFuse71;
 import org.fusesource.ide.projecttemplates.util.NewFuseIntegrationProjectMetaData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +31,8 @@ public class FuseIntegrationProjectCreatorRunnableForCBRIT extends FuseIntegrati
 
 	@Parameters(name = "{0}")
 	public static List<String> parameters(){
-		return CamelCatalogUtils.getCamelVersionsToTestWith(); 
+		return Arrays.asList("2.21.0.fuse-710017");
+		//return CamelCatalogUtils.getCamelVersionsToTestWith(); 
 	}
 	
 	public FuseIntegrationProjectCreatorRunnableForCBRIT(String version) {
@@ -58,8 +61,10 @@ public class FuseIntegrationProjectCreatorRunnableForCBRIT extends FuseIntegrati
 		NewFuseIntegrationProjectMetaData newProjectMetadata = super.createDefaultNewProjectMetadata(dsl, projectName);
 		if(isOlderThan220()){
 			newProjectMetadata.setTemplate(new CBRTemplateForFuse6());
-		} else {
+		} else if(isOlderThan221ForFuse71()){
 			newProjectMetadata.setTemplate(new CBRTemplateForFuse7());
+		} else {
+			newProjectMetadata.setTemplate(new CBRTemplateForFuse71());
 		}
 		return newProjectMetadata;
 	}
