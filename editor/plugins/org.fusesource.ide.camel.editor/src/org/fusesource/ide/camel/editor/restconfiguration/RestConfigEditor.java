@@ -10,11 +10,14 @@
  ******************************************************************************/
 package org.fusesource.ide.camel.editor.restconfiguration;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -22,6 +25,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -54,12 +58,16 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.progress.IProgressService;
 import org.fusesource.ide.camel.editor.CamelEditor;
+import org.fusesource.ide.camel.editor.component.wizard.ComponentManager;
 import org.fusesource.ide.camel.editor.internal.CamelEditorUIActivator;
 import org.fusesource.ide.camel.editor.internal.UIMessages;
 import org.fusesource.ide.camel.editor.restconfiguration.actions.AddRestConfigurationAction;
@@ -69,6 +77,10 @@ import org.fusesource.ide.camel.editor.restconfiguration.actions.DeleteRestConfi
 import org.fusesource.ide.camel.editor.restconfiguration.actions.DeleteRestElementAction;
 import org.fusesource.ide.camel.editor.restconfiguration.actions.DeleteRestOperationAction;
 import org.fusesource.ide.camel.editor.restconfiguration.wizards.AddRestOperationWizard;
+import org.fusesource.ide.camel.editor.utils.MavenUtils;
+import org.fusesource.ide.camel.model.service.core.catalog.cache.CamelCatalogCacheManager;
+import org.fusesource.ide.camel.model.service.core.catalog.cache.CamelModel;
+import org.fusesource.ide.camel.model.service.core.catalog.components.Component;
 import org.fusesource.ide.camel.model.service.core.catalog.eips.Eip;
 import org.fusesource.ide.camel.model.service.core.model.AbstractCamelModelElement;
 import org.fusesource.ide.camel.model.service.core.model.AbstractRestCamelModelElement;
@@ -490,6 +502,7 @@ public class RestConfigEditor extends EditorPart implements ICamelModelListener,
 			public void widgetSelected(SelectionEvent e) {
 				if (rce != null) {
 					rce.setComponent(componentCombo.getText());
+					addComponentDependency(componentCombo.getText());
 				}
 			}
 		});
@@ -547,6 +560,35 @@ public class RestConfigEditor extends EditorPart implements ICamelModelListener,
 		section.setClient(client);
 		
 		return client;
+	}
+	
+	private void addComponentDependency(String componentName) {
+		IWorkbench wb = PlatformUI.getWorkbench();
+		IProgressService ps = wb.getProgressService();
+		try {
+			ps.busyCursorWhile(new IRunnableWithProgress() {
+				public void run(IProgressMonitor pm) {
+					IProject project = parentEditor.getDesignEditor().getWorkspaceProject();
+					final CamelModel camelModel = CamelCatalogCacheManager.getInstance().getCamelModelForProject(project, pm);
+					final ComponentManager componentManager = new ComponentManager(camelModel);
+					Set<Component> componentSet = componentManager.getAllComponents();
+					if (!componentSet.isEmpty()) {
+						Iterator<Component> iter = componentSet.iterator();
+						while (iter.hasNext()) {
+							Component component = iter.next();
+							if (component.getId().equalsIgnoreCase(componentName)) {
+								new MavenUtils().updateMavenDependencies(component.getDependencies(), project, pm);
+								break;
+							}
+						}
+					}
+				}
+			});
+		} catch (InvocationTargetException e) {
+			CamelEditorUIActivator.pluginLog().logError(e);
+		} catch (InterruptedException e) {
+			CamelEditorUIActivator.pluginLog().logError(e);
+		}
 	}
 
 	private void clearUI() {
